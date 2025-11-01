@@ -1,0 +1,22 @@
+Given a 10-second audio clip of bird sounds, predict the presence of 19 bird species in a multi-label classification task. The audio may contain multiple simultaneously vocalizing birds, non-bird sounds (e.g., insects), and background noise (e.g., wind, rain).
+There are 19 possible bird species, each identified by a class index from 0 to 18 as follows:
+0  - Brown Creeper  
+1  - Pacific Wren  
+2  - Pacific-slope Flycatcher  
+3  - Red-breasted Nuthatch  
+4  - Dark-eyed Junco  
+5  - Olive-sided Flycatcher  
+6  - Hermit Thrush  
+7  - Chestnut-backed Chickadee  
+8  - Varied Thrush  
+9  - Hermit Warbler  
+10 - Swainson's Thrush  
+11 - Hammond's Flycatcher  
+12 - Western Tanager  
+13 - Black-headed Grosbeak  
+14 - Golden Crowned Kinglet  
+15 - Warbling Vireo  
+16 - MacGillivray's Warbler  
+17 - Stellar's Jay  
+18 - Common Nighthawk  
+Return a string of the class indices of the predicted bird species, separated by commas (e.g., "2,3,10).

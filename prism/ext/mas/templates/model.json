@@ -1,0 +1,98 @@
+{
+    "text-classification": {
+        "description": "Classify entire text (sentences, paragraphs, documents) into predefined categories based on overall content and meaning.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'text-classification') -> input_data is a dict with key 'text' of type str",
+        "output": "output is a dict with key 'predicted' of type str",
+        "guidance": "Use when: classifying entire text based on content/meaning (sentiment, topic, intent) | Input: TEXT data only | Avoid when: need word-level classification (use token-classification), image classification (use image-classification), or undefined label sets (use zero-shot-classification) | Caveats: sensitive to class imbalance and domain shift"
+    },
+    "token-classification": {
+        "description": "Assign labels to individual words or tokens within text. Use for word-level classification tasks.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'token-classification') -> input_data is a dict with key 'text' of type str",
+        "output": "output is a dict with key 'predicted' of type list of dict with key 'word' of type str and key 'entity_group' of type str",
+        "guidance": "Use when: classifying individual words, word properties, or need word-level analysis (NER, POS tagging) | Input: TEXT data only | Avoid when: need whole-text classification or document-level understanding | Caveats: span boundaries and label consistency can be brittle across domains"
+    },
+    "zero-shot-classification": {
+        "description": "Classify text against user-provided candidate labels without task-specific training. Similar to text-classification but for dynamic label sets but performance not good as text-classification.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'zero-shot-classification') -> input_data is a dict with key 'text' of type str and key 'labels' of type list of str",
+        "output": "output is a dict with key 'predicted' of type str",
+        "guidance": "Use when: label set changes per request or no trained classifier exists for text classification | Input: TEXT data only | Avoid when: labels are ambiguous/overlapping, for image classification (use image-classification), or stable trained classifier available | Caveats: highly sensitive to label phrasing and domain shift"
+    },
+    "sentence-similarity": {
+        "description": "Measure semantic similarity between two pieces of text for comparison, alignment, or relatedness.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'sentence-similarity') -> input_data is a dict with key 'text' of type str and key 'other_sentences' of type list of str",
+        "output": "output is a dict with key 'predicted' of type float",
+        "guidance": "Use when: comparing texts for similarity, matching, or relatedness (not categorization) | Input: TEXT data only | Avoid when: need classification into categories | Caveats: similarity scores may vary based on model training domain"
+    },
+    "text-generation": {
+        "description": "Generate text or code in response to a prompt or question. Creates new content based on input.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'text-generation') -> input_data is a dict with key 'text' of type str",
+        "output": "output is a dict with key 'text' of type str",
+        "guidance": "Use when: need to generate new text, code, explanations, or creative content | Input: TEXT data only | Avoid when: only need classification or information extraction | Caveats: outputs are unconstrained and may hallucinate"
+    },
+    "question-answering": {
+        "description": "Extract specific information from given context text based on a user query.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'question-answering') -> input_data is a dict with key 'text' of type str is the question of user  and key 'context' of type str is the context to extract information from",
+        "output": "output is a dict with key 'answer' of type str",
+        "guidance": "Use when: extracting specific information from context text based on questions | Input: TEXT data only | Avoid when: no context available or need open-ended generation | Caveats: limited to information explicitly found in context"
+    },
+    "summarization": {
+        "description": "Condense long text while retaining key information and meaning.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'summarization') -> input_data is a dict with key 'text' of type str",
+        "output": "output is a dict with key 'summary_text' of type str",
+        "guidance": "Use when: need to shorten long passages while keeping core meaning | Input: TEXT data only | Avoid when: need classification or extraction of specific data | Caveats: may omit subtle but important info in short texts"
+    },
+    "translation": {
+        "description": "Convert text from one language to another while preserving meaning and content.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'translation') -> input_data is a dict with key 'text' of type str",
+        "output": "output is a dict with key 'translation_text' of type str",
+        "guidance": "Use when: need same content in different language | Input: TEXT data only | Avoid when: goal is creative rewriting, summarization, or labeling | Caveats: idioms, domain terminology, and named entities may drift"
+    },
+    "image-classification": {
+        "description": "Classify entire images into predefined categories for content recognition, categorization, or identification.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'image-classification') -> input_data is a dict with key 'image' of type PIL.Image",
+        "output": "output is a dict with key 'predicted' of type str",
+        "guidance": "Use when: simple recognition/classification into predefined labels. Preferred for single digits, numbers, simple symbols | Input: IMAGE data only | Avoid when: need text descriptions or captions (use image-to-text), object location (use object-detection) | For composite/mixed images: split or break the image into smaller parts first using glue code, then apply image-classification to each part | Caveats: sensitive to training domain and visual style"
+    },
+    "object-detection": {
+        "description": "Locate and categorize general object types in images with bounding boxes. Detects common objects like people, cars, animals. NOT for overall image description or content understanding.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'object-detection') -> input_data is a dict with key 'image' of type PIL.Image",
+        "output": "output is a dict with key 'predicted' of type list of dict with keys 'label' of type str and 'score' of type float and bounding box coordinates 'box' with keys 'xmin' of type float, 'ymin' of type float, 'xmax' of type float, 'ymax' of type float",
+        "guidance": "Use when: need to locate and identify multiple objects in images, determine object positions and counts, spatial relationships | Input: IMAGE data only | Avoid when: need overall image description/content understanding (use image-to-text), detailed classification of the entire image, or detailed classification of specific object properties such as breed, gender, etc. | WRONG usage: 'identify content of image', 'describe what's in the image' | Can combine: use object-detection to locate objects, then image-classification for detailed classification of detected objects | Caveats: limited to general object types, bounding box accuracy varies for small/overlapping objects"
+    },
+    "image-to-text": {
+        "description": "Generate descriptive captions or extract readable text from images. Outputs text descriptions or OCR results. BEST for overall content understanding and scene description.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'image-to-text') -> input_data is a dict with key 'image' of type PIL.Image",
+        "output": "output is a dict with key 'text' of type str",
+        "guidance": "Use when: need detailed captions, overall image content understanding, scene descriptions, complex text extraction, or long document OCR. PREFERRED for: 'identify content of image', 'describe what's in the image', 'understand image scene' | Input: IMAGE data only | Avoid when: recognizing single digits/numbers/simple symbols (use image-classification), simple category recognition, or need object locations (use object-detection) | For composite/complex images: works best on single coherent images; for large images with multiple parts or mixed content, split into smaller focused regions first using glue code | Caveats: accuracy drops on dense, noisy, or complex composite images"
+    },
+    "audio-classification": {
+        "description": "Classify entire audio recordings into predefined categories based on acoustic properties (music genres, emotions, sound types, language, etc.).",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'audio-classification') -> input_data is a dict with key 'audio' of type bytes",
+        "output": "output is a dict with key 'predicted' of type str",
+        "guidance": "Use when: categorizing audio based on acoustic patterns (dog bark, music genre, speaker emotion, spoken language, etc.) | Input: AUDIO data only | Avoid when: need spoken text content (use automatic-speech-recognition) | Caveats: depends on audio quality and length"
+    },
+    "automatic-speech-recognition": {
+        "description": "Convert spoken audio to text. Extract text content from audio for content understanding and text-based processing.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'automatic-speech-recognition') -> input_data is a dict with key 'audio' of type bytes",
+        "output": "output is a dict with key 'text' of type str",
+        "guidance": "Use when: need spoken content as text for comparison, analysis, or matching with other text | Input: AUDIO data only | Avoid when: need audio categorization (use audio-classification) | Caveats: accuracy depends on audio quality, accent, and background noise"
+    },
+    "video-classification": {
+        "description": "Classify entire videos into categories based on overall content and motion (action recognition, content categorization).",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'video-classification') -> input_data is a dict with key 'video' of type str which is the path to the video file",
+        "output": "output is a dict with key 'predicted' of type str",
+        "guidance": "Use when: categorizing videos as a whole (action types, sports, content categories) | Input: VIDEO data only | Avoid when: need frame-level analysis or object detection | Caveats: sensitive to motion blur, cuts, or very short clips"
+    },
+    "tabular-classification": {
+        "description": "Classify structured tabular records into predefined categories based on feature values.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'tabular-classification') -> input_data is a dict with key 'row' of type dict",
+        "output": "output is a dict with key 'predicted' of type str",
+        "guidance": "Use when: predicting categories from structured data features (CSV rows, database records, feature tables) | Input: TABULAR data only | Avoid when: predicting continuous values (use tabular-regression), algorithmic computations (use glue code), or processing unstructured data | Caveats: performance may degrade if column names or formats mismatch training data"
+    },
+    "tabular-regression": {
+        "description": "Predict continuous numerical values from structured tabular records based on feature relationships.",
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'tabular-regression') -> input_data is a dict with key 'row' of type dict",
+        "output": "output is a dict with key 'predicted' of type float",
+        "guidance": "Use when: predicting numerical values from structured data features (CSV rows, database records, feature tables) | Input: TABULAR data only (a list of  | Avoid when: predicting categories (use tabular-classification), algorithmic computations (use glue code), or processing unstructured data | Caveats: predictions sensitive to scale, outliers, and feature distribution changes"
+    }
+}

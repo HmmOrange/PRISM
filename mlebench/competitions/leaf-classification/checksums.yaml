@@ -1,0 +1,7 @@
+private:
+  answers.csv: b98261492cfc4bc068ac579b88cd962c
+public:
+  sample_submission.csv: 5c78eb3115d718681d0c0f2f6898054a
+  test.csv: 80c9425da345d3c56386bbb3e1470677
+  train.csv: acf26a95aa829f48a17819597a3e6e7d
+zip: 043bdec7fadb7922978b7484217b6007

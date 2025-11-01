@@ -1,0 +1,1 @@
+Given a fundus photograph of the retina, assess the severity of diabetic retinopathy to help prevent blindness in rural areas. The images may contain artifacts, be out of focus, or have varying exposure levels due to different imaging conditions. Return a severity rating: 0 (No DR), 1 (Mild), 2 (Moderate), 3 (Severe), or 4 (Proliferative DR).

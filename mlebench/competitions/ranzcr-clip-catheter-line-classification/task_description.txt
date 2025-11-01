@@ -1,0 +1,2 @@
+Given a chest X-ray image, detect the presence and position of catheters and lines, categorizing them as normal, borderline, or abnormal for endotracheal tubes (ETT), nasogastric tubes (NGT), central venous catheters (CVC), and the presence of a Swan Ganz catheter. Return a list of 11 binary values (1 = condition present, 0 = condition not present), in the following order:
+[ETT - Abnormal, ETT - Borderline, ETT - Normal, NGT - Abnormal, NGT - Borderline, NGT - Incompletely Imaged, NGT - Normal, CVC - Abnormal, CVC - Borderline, CVC - Normal, Swan Ganz Catheter Present].

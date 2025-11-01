@@ -1,0 +1,66 @@
+import os
+import pandas as pd
+from tqdm import tqdm
+
+tqdm.pandas()
+
+
+def build_train_row(row):
+    text_data = row.drop(
+        labels=["id", "formation_energy_ev_natom", "bandgap_energy_ev"]
+    ).to_dict()
+    return {
+        "text_data": text_data,
+        "label": {
+            "formation_energy_ev_natom": row["formation_energy_ev_natom"],
+            "bandgap_energy_ev": row["bandgap_energy_ev"],
+        },
+        "input_id": row["id"],
+    }
+
+
+def build_test_row(row):
+    text_data = row.drop(labels=["id"]).to_dict()
+    return {
+        "text_data": text_data,
+        "input_id": row["id"],
+        "fields": row.to_dict(),
+        "predict_keys": ["formation_energy_ev_natom", "bandgap_energy_ev"],
+    }
+
+
+def load_train_data(path: str):
+    public_path = os.path.join(path, "prepared", "public")
+    train_csv_path = os.path.join(public_path, "train.csv")
+    train_df = pd.read_csv(train_csv_path)
+
+    data = train_df.progress_apply(lambda row: build_train_row(row), axis=1).tolist()
+    return data, pd.DataFrame()
+
+
+def load_test_data(path: str):
+    public_path = os.path.join(path, "prepared", "public")
+    test_csv_path = os.path.join(public_path, "test.csv")
+    test_df = pd.read_csv(test_csv_path)
+
+    data = test_df.progress_apply(lambda row: build_test_row(row), axis=1).tolist()
+    return data, pd.DataFrame()
+
+def load_lite_test_data(path: str):
+    public_path = os.path.join(path, "prepared", "public")
+    private_lite_path = os.path.join(path, "prepared_lite", "private")
+    test_csv_path = os.path.join(public_path, "test.csv")
+    test_label_path = os.path.join(private_lite_path, "answers.csv")
+    
+    test_df = pd.read_csv(test_csv_path)
+    test_label_df = pd.read_csv(test_label_path)
+    
+    # Filter test data to only include samples that are in the lite test set
+    lite_ids = set(test_label_df["id"].values)
+    filtered_test_df = test_df[test_df["id"].isin(lite_ids)]
+    
+    data = filtered_test_df.progress_apply(lambda row: build_test_row(row), axis=1).tolist()
+    return data, test_label_df
+
+def mapping(predictions: pd.DataFrame, path: str):
+    return predictions

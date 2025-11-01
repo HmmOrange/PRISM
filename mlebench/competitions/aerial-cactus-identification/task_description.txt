@@ -1,0 +1,1 @@
+Given a 32x32 pixel aerial photograph, classify whether the image contains a columnar cactus. The images are thumbnails of aerial photos taken for vegetation surveillance in protected natural areas. Return a binary label (0 or 1) indicating whether the image contains a columnar cactus (1 if present, 0 if not)

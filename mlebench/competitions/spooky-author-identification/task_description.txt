@@ -1,0 +1,1 @@
+Given a sentence from a horror story, predict the author among Edgar Allan Poe (EAP), HP Lovecraft (HPL), and Mary Shelley (MWS). Return a single class label: either "EAP", "HPL", or "MWS" - corresponding to the most likely author of the sentence.

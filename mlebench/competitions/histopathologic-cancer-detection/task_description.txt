@@ -1,0 +1,2 @@
+Given a small pathology image patch, determine whether the center 32×32px region contains at least one pixel of tumor tissue.
+Return 1 if tumor tissue is present, otherwise 0.

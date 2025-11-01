@@ -1,0 +1,9 @@
+Given a token from a sentence (e.g., "6ft", "$3.16", "12:47"), predict its normalized spoken form in English (e.g., "six feet", "three dollars, sixteen cents", "twelve forty-seven").
+
+Input format:
+A dictionary where:
+- "token": the token string to be normalized (e.g., "6ft")
+- "sentence": the full sentence containing the token (e.g., "The baby giraffe is 6ft tall and weighs 150lb.")
+- "token_id": the index of the token in the sentence (used in case of duplicate tokens)
+
+The output will be A single string representing the normalized spoken form of the token (e.g., "six feet").

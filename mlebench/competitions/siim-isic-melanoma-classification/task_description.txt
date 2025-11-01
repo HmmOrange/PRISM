@@ -1,0 +1,2 @@
+Given a dermoscopic image of a skin lesion, along with metadata including patient_id, sex, age_approx, and anatom_site_general_challenge, classify whether the lesion is malignant (melanoma) or benign.
+Return a single binary label: 1 if the lesion is malignant, 0 if it is benign.

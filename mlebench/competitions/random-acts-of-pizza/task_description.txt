@@ -1,0 +1,4 @@
+Given a Reddit pizza request, predict whether it will be successful (i.e., whether the requester will receive a pizza).
+Return a single binary output:
+- 1 if the request was successful
+- 0 otherwise

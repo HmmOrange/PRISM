@@ -1,0 +1,2 @@
+Given a text comment from an online conversation, determine whether it is insulting to another participant in the conversation.
+Return 1 if the comment is insulting, otherwise 0.

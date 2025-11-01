@@ -1,0 +1,1 @@
+Given the pickup and dropoff locations of a taxi ride in New York City, including pickup_datetime, pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude, and passenger_count, predict the fare amount (inclusive of tolls). Return a single float value representing the predicted fare amount in dollars.

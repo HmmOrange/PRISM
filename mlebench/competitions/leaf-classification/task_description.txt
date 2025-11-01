@@ -1,0 +1,1 @@
+Given a leaf sample represented by extracted image features, classify it into one of 99 plant species. Output is single species label (one of 99 possible classes).

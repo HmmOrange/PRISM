@@ -1,0 +1,1 @@
+Given a set of feature columns from a synthetic dataset based on the Forest Cover Type Prediction, predict the categorical Cover_Type class for each observation. Return an integer value representing the predicted Cover_Type class (from 1 to 7) for each Id in the test set.

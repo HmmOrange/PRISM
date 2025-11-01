@@ -1,0 +1,1 @@
+Given simulated manufacturing control data with normalized continuous and categorical features, classify whether the machine is in state 1 or not. Return a single label: 1 if the machine is in state 1, otherwise 0.

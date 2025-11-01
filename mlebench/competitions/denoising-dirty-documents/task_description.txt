@@ -1,0 +1,1 @@
+Given a noisy scanned image of text (containing artifacts such as coffee stains, faded spots, or creases), denoise the image to restore clear text content. Return an array of pixel intensities (from 0.0 to 1.0) for the cleaned image, where 0.0 represents black and 1.0 represents white, arranged in row-major order (left to right, top to bottom).

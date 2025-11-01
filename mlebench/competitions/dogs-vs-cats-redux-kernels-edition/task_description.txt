@@ -1,0 +1,1 @@
+Given an image containing either a dog or a cat, classify it. Return 1 if the image is a dog, otherwise return 0 (cat).

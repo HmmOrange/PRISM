@@ -1,0 +1,3 @@
+Given a Wikipedia comment, classify it into six binary toxicity categories: toxic, severe_toxic, obscene, threat, insult, and identity_hate.
+
+Return a list of six binary values (0 or 1), each indicating whether the comment belongs to the corresponding category in this exact order: [toxic, severe_toxic, obscene, threat, insult, identity_hate]

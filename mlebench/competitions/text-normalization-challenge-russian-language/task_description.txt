@@ -1,0 +1,9 @@
+Given a token in Russian text (e.g., "12 февраля 2013", "$3.16", or "15 февраля 2013"), predict its normalized spoken form in Russian, following transliteration conventions when applicable (e.g., "12 февраля 2013" → "двенадцатого февраля две тысячи тринадцатого года").
+
+Input format:
+A dictionary where:
+- "token": the token string to be normalized (e.g., "12 февраля 2013")
+- "sentence": the full sentence containing the token (e.g., "Архивировано из первоисточника 12 февраля 2013")
+- "token_id": the index of the token in the sentence (used in case of duplicate tokens)
+
+The output will be a single string representing the normalized spoken form of the token in Russian (e.g., "двенадцатого февраля две тысячи тринадцатого года").

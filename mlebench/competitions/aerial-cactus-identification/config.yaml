@@ -1,0 +1,23 @@
+id: aerial-cactus-identification
+name: Aerial Cactus Identification
+competition_type: code
+awards_medals: false
+prizes: null
+description: mlebench/competitions/aerial-cactus-identification/description.md
+task_description: mlebench/competitions/aerial-cactus-identification/task_description.txt
+
+dataset:
+  answers: aerial-cactus-identification/prepared/private/answers.csv
+  lite_answers: aerial-cactus-identification/prepared_lite/private/answers.csv
+  sample_submission: aerial-cactus-identification/prepared/public/sample_submission.csv
+
+grader:
+  name: auc-roc
+  grade_fn: mlebench.competitions.aerial-cactus-identification.grade:grade
+
+lite_grader:
+  name: auc-roc
+  grade_fn: mlebench.competitions.aerial-cactus-identification.grade:grade_lite
+
+preparer: mlebench.competitions.aerial-cactus-identification.prepare:prepare
+lite_preparer: mlebench.competitions.aerial-cactus-identification.prepare:prepare_lite

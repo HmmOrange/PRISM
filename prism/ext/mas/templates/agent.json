@@ -1,0 +1,17 @@
+{
+    "glue_coder": {
+        "interface": "await self.glue_coder.run(instruction: str, experience: list[Message]) -> Message",
+        "usage": "",
+        "note": ""
+    },
+    "ml_coder": {
+        "interface": "await self.ml_coder.run(instruction: str, experience: list[Message]) -> Message",
+        "usage": "",
+        "note": ""
+    },
+    "synthesizer": {
+        "interface": "await self.synthesizer.run(experience: list[Message]) -> Message",
+        "usage": "",
+        "note": ""
+    }
+}

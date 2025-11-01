@@ -1,0 +1,1 @@
+Given an image of a dog, identify the breed from among the 120 dog breeds defined in the Stanford Dogs dataset.

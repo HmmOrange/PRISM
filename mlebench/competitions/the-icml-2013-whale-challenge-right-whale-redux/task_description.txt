@@ -1,0 +1,1 @@
+Given a short audio clip from a Marine Autonomous Recording Unit (MARU), classify whether it contains a North Atlantic Right Whale call or not. Return a single label: 1 if the clip contains a whale call, and 0 if it does not.

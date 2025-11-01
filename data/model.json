@@ -1,0 +1,66 @@
+{
+    "text-classification": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'text-classification') -> input_data is a dict with key 'text' of type str",
+        "output": "output is a dict with key 'predicted' of type str"
+    },
+    "token-classification": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'token-classification') -> input_data is a dict with key 'text' of type str",
+        "output": "output is a dict with key 'predicted' of type list of dict with key 'word' of type str and key 'entity_group' of type str"
+    },
+    "zero-shot-classification": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'zero-shot-classification') -> input_data is a dict with key 'text' of type str and key 'labels' of type list of str is candidates of labels",
+        "output": "output is a dict with key 'predicted' of type str"
+    },
+    "sentence-similarity": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'sentence-similarity') -> input_data is a dict with key 'text' of type str and key 'other_sentences' of type list of str",
+        "output": "output is a dict with key 'predicted' of type float"
+    },
+    "text-generation": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'text-generation') -> input_data is a dict with key 'text' of type str",
+        "output": "output is a dict with key 'text' of type str"
+    },
+    "question-answering": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'question-answering') -> input_data is a dict with key 'text' of type str and key 'context' of type str",
+        "output": "output is a dict with key 'answer' of type str"
+    },
+    "summarization": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'summarization') -> input_data is a dict with key 'text' of type str",
+        "output": "output is a dict with key 'summary_text' of type str"
+    },
+    "translation": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'translation') -> input_data is a dict with key 'text' of type str",
+        "output": "output is a dict with key 'translation_text' of type str"
+    },
+    "image-classification": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'image-classification') -> input_data is a dict with key 'image' of type PIL.Image",
+        "output": "output is a dict with key 'predicted' of type str"
+    },
+    "object-detection": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'object-detection') -> input_data is a dict with key 'image' of type PIL.Image",
+        "output": "output is a dict with key 'predicted' of type str"
+    },
+    "image-to-text": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'image-to-text') -> input_data is a dict with key 'image' of type PIL.Image",
+        "output": "output is a dict with key 'text' of type str"
+    },
+    "audio-classification": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'audio-classification') -> input_data is a dict with key 'audio' of type bytes",
+        "output": "output is a dict with key 'predicted' of type str"
+    },
+    "automatic-speech-recognition": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'automatic-speech-recognition') -> input_data is a dict with key 'audio' of type bytes",
+        "output": "output is a dict with key 'text' of type str"
+    },
+    "video-classification": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'video-classification') -> input_data is a dict with key 'video' of type str which is the path to the video file",
+        "output": "output is a dict with key 'predicted' of type str"
+    },
+    "tabular-classification": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'tabular-classification') -> input_data is a dict with key 'row' of type dict",
+        "output": "output is a dict with key 'predicted' of type str"
+    },
+    "tabular-regression": {
+        "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str = 'tabular-regression') -> input_data is a dict with key 'row' of type dict",
+        "output": "output is a dict with key 'predicted' of type float"
+    }
+}

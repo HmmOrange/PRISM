@@ -1,0 +1,35 @@
+huggingface:
+  token:  <your-token>
+proxy: 
+
+local_inference_endpoint:
+  host: <your-host>
+  port: <your-port>
+  use_https: false
+
+prism:
+  glue_coder_max_react_loop: 5
+  ml_coder_max_react_loop: 5
+  embedding_model: "text-embedding-3-small"
+  top_k: 10
+
+embedding:
+  api_type: "openai"
+  base_url: "https://api.openai.com/v1"
+  api_key: <your-api-key>
+  model: "text-embedding-3-small"
+
+llm:
+  api_type: "openai"  # or azure / ollama / groq etc.
+  base_url: "https://api.openai.com/v1"
+  api_key: <your-api-key>
+  model: <your-model>
+  temperature: 0
+
+models:
+  "<your-model>":
+    api_type: "openai"
+    base_url: "https://api.openai.com/v1"
+    api_key: <your-api-key>
+    temperature: 0
+  

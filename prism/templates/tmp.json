@@ -1,0 +1,99 @@
+{
+    "token-classification": {
+      "description": "Assign labels at the token or short-span level within text.",
+      "guidance": "Use when: you need properties of individual words/characters or brief spans | Avoid when: the task requires whole-document understanding, long-range relations, or whole-text labels | Caveats: span boundaries and label consistency can be brittle across domains",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'text' of type str",
+      "output": "output is a dict with key 'predicted' of type list of dict with key 'word' of type str and key 'entity_group' of type str"
+    },
+    "text-classification": {
+      "description": "Assign discrete label(s) to an entire text.",
+      "guidance": "Use when: you need a single or multi-label decision for a sentence/paragraph/document | Avoid when: you need token-level extraction or the label set is undefined | Caveats: sensitive to class imbalance and domain shift",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'text' of type str",
+      "output": "output is a dict with key 'predicted' of type str"
+    },
+    "zero-shot-classification": {
+      "description": "Classify text against user-provided candidate labels without task-specific training.",
+      "guidance": "Use when: the label set changes per request | Avoid when: labels are ambiguous/overlapping or a stable trained classifier exists | Caveats: highly sensitive to label phrasing and domain shift",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'text' of type str and key 'labels' of type list of str",
+      "output": "output is a dict with key 'predicted' of type str"
+    },
+    "translation": {
+      "description": "Convert text from one language to another while preserving meaning.",
+      "guidance": "Use when: the target is the same content in a different language | Avoid when: the goal is creative rewriting, summarization, or labeling | Caveats: idioms, domain terminology, and named entities may drift",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'text' of type str",
+      "output": "output is a dict with key 'translation_text' of type str"
+    },
+    "summarization": {
+      "description": "Condense text while retaining key information.",
+      "guidance": "Use when: long inputs need shorter versions | Avoid when: inputs are very short or the task requires exact quotations or specific QA | Caveats: may omit details or introduce paraphrasing artifacts",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'text' of type str",
+      "output": "output is a dict with key 'summary_text' of type str"
+    },
+    "question-answering": {
+      "description": "Answer a question using a provided context passage.",
+      "guidance": "Use when: answers are supported by supplied context | Avoid when: reliable context is missing or broad synthesis is required | Caveats: may hallucinate beyond context; answer quality depends on context relevance",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'text' of type str and key 'context' of type str",
+      "output": "output is a dict with key 'answer' of type str"
+    },
+    "text-generation": {
+      "description": "Generate or continue free-form text.",
+      "guidance": "Use when: drafting, ideation, or open-ended responses are needed | Avoid when: deterministic labeling or verified factual outputs are required | Caveats: outputs can be non-deterministic and may contain inaccuracies",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'text' of type str",
+      "output": "output is a dict with key 'text' of type str"
+    },
+    "sentence-similarity": {
+      "description": "Measure semantic similarity between texts.",
+      "guidance": "Use when: matching, deduplication, or ranking by closeness is needed | Avoid when: discrete labels are required | Caveats: performance can degrade across domains/languages and with very long inputs; score scales vary by model",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'text' of type str and key 'other_sentences' of type list of str",
+      "output": "output is a dict with key 'predicted' of type float"
+    },
+    "tabular-classification": {
+      "description": "Predict a discrete class from structured (tabular) records.",
+      "guidance": "Use when: the target is categorical | Avoid when: the target is continuous | Caveats: features and preprocessing must match training; handle missing values and drift",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'row' of type dict",
+      "output": "output is a dict with key 'predicted' of type str"
+    },
+    "tabular-regression": {
+      "description": "Predict a continuous value from structured (tabular) records.",
+      "guidance": "Use when: the target is numeric | Avoid when: the task is classification | Caveats: sensitive to scaling, outliers, and feature drift; monitor calibration",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'row' of type dict",
+      "output": "output is a dict with key 'predicted' of type float"
+    },
+    "object-detection": {
+      "description": "Locate and categorize objects in images with bounding boxes.",
+      "guidance": "Use when: you need both presence and position of objects | Avoid when: only whole-image labels or pixel-accurate segmentation are required | Caveats: small or heavily overlapping objects and crowded scenes reduce accuracy",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'image' of type PIL.Image",
+      "output": "output is a dict with key 'predicted' of type str"
+    },
+    "image-classification": {
+      "description": "Assign label(s) to an entire image.",
+      "guidance": "Use when: a dominant subject or concept defines the frame | Avoid when: object locations or text reading in images are required | Caveats: multi-object scenes can confuse; scale and cropping affect results",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'image' of type PIL.Image",
+      "output": "output is a dict with key 'predicted' of type str"
+    },
+    "image-to-text": {
+      "description": "Generate a textual description of visible image content.",
+      "guidance": "Use when: you want a general, human-readable summary of an image | Avoid when: precise OCR, fine-grained attributes, complex composite layouts, or exact structured values are required | Caveats: may miss small details or subtle attributes",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'image' of type PIL.Image",
+      "output": "output is a dict with key 'text' of type str"
+    },
+    "automatic-speech-recognition": {
+      "description": "Transcribe spoken audio into text.",
+      "guidance": "Use when: the goal is a verbatim or near-verbatim transcript of speech | Avoid when: you need general audio categorization or non-speech analysis | Caveats: noise, overlapping speakers, accents, and recording conditions degrade quality",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'audio' of type bytes",
+      "output": "output is a dict with key 'text' of type str"
+    },
+    "audio-classification": {
+      "description": "Assign an audio clip to predefined categories.",
+      "guidance": "Use when: recognizing acoustic patterns or situations at the clip level | Avoid when: transcripts are required | Caveats: sensitive to recording conditions and requires clear label definitions",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'audio' of type bytes",
+      "output": "output is a dict with key 'predicted' of type str"
+    },
+    "video-classification": {
+      "description": "Assign a label to an entire video based on overall content and motion.",
+      "guidance": "Use when: recognizing general activity or theme | Avoid when: temporal localization, tracking, or frame-specific details are required | Caveats: long videos may need sampling; rapid cuts and motion blur can affect results",
+      "interface": "model_inference(model_id: str, input_data: dict, hosted_on: str, task: str) -> input_data is a dict with key 'video' of type str which is the path to the video file",
+      "output": "output is a dict with key 'predicted' of type str"
+    }
+  }
+  

@@ -1,0 +1,1 @@
+Given an image of an apple leaf, classify its health condition into one or more categories: healthy, multiple diseases, rust or scab. Return a single label from the set ["healthy",  "multiple_diseases", "rust", "scab"] indicating the predicted condition of the leaf.
