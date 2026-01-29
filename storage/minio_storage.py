@@ -7,14 +7,18 @@ from storage.base_storage import BaseStorage
 class MinIOStorage(BaseStorage):
     def __init__(
         self,
-        endpoint: str,
+        endpoint_internal: str,
+        endpoint_external: str,
         access_key: str,
         secret_key: str,
         bucket: str,
         secure: bool = False,
     ):
+        self.endpoint_internal = endpoint_internal
+        self.endpoint_external = endpoint_external
+
         self.client = Minio(
-            endpoint,
+            endpoint_internal,
             access_key=access_key,
             secret_key=secret_key,
             secure=secure,
@@ -32,12 +36,18 @@ class MinIOStorage(BaseStorage):
         """
         Generate a presigned PUT URL for uploading a single object.
 
-        IMPORTANT:
-        - MinIO does NOT support `content_type` in presigned_put_object
-        - Client must send Content-Type during PUT upload
+        Notes:
+        - MinIO presigned_put_object does NOT accept content_type
+        - Client must send Content-Type during PUT
         """
-        return self.client.presigned_put_object(
-            bucket_name=self.bucket,
-            object_name=object_key,
-            expires=timedelta(seconds=expires_in),
+        url = self.client.presigned_put_object(
+            self.bucket,
+            object_key,
+            expires=timedelta(seconds=expires_in)
+        )
+
+        # Rewrite Docker-internal hostname → browser-reachable hostname
+        return url.replace(
+            self.endpoint_internal,
+            self.endpoint_external,
         )

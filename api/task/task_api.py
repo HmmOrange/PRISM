@@ -14,6 +14,8 @@ from db.schemas.task.task_schema import TaskDetailResponse
 from db.services.task.task_service import create_task
 from db.services.task.task_service import list_tasks
 from db.services.task.task_service import get_task
+from db.schemas.task.file_schema import CommitFilesRequest
+from db.services.task.file_service import commit_files
 
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
@@ -47,3 +49,15 @@ def get_task_api(
         return get_task(db, task_id)
     except NoResultFound:
         raise HTTPException(status_code=404, detail="Task not found")
+        
+@router.post(
+    "/{task_id}/files/commit",
+    summary="Commit uploaded files metadata",
+)
+def commit_files_api(
+    task_id: str,
+    payload: CommitFilesRequest,
+    db: Session = Depends(get_db),
+):
+    commit_files(db, task_id, payload)
+    return {"status": "ok"}

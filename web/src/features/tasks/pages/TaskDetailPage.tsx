@@ -4,6 +4,8 @@ import {
   Stack,
   Chip,
   CircularProgress,
+  Divider,
+  Box,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -30,26 +32,58 @@ export default function TaskDetailPage() {
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
-      <Stack spacing={3}>
-        <Typography variant="h4">{task.name}</Typography>
+        <Stack spacing={3}>
+            <Typography variant="h4">{task.name}</Typography>
+            <Typography color="text.secondary">{task.description}</Typography>
+            <Chip label={task.metric} sx={{ width: "fit-content" }} />
 
-        <Typography color="text.secondary">
-          {task.description}
-        </Typography>
+            <Divider />
 
-        <Chip label={task.metric} sx={{ width: "fit-content" }} />
+            <Typography variant="h6">Queries</Typography>
 
-        <Stack spacing={1}>
-          <Typography variant="h6">Queries</Typography>
+            <Stack spacing={2}>
+            {task.queries.map((q) => (
+                <Box
+                key={q.index}
+                sx={{
+                    p: 2,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 2,
+                }}
+                >
+                <Stack spacing={1}>
+                    <Typography fontWeight={600}>
+                    Query {q.index} · {q.split}
+                    </Typography>
 
-          {task.queries.map((q) => (
-            <Typography key={q.index}>
-              #{q.index} — {q.split}
-              {q.label && ` — ${q.label}`}
-            </Typography>
-          ))}
+                    {q.label && (
+                    <Typography color="text.secondary">
+                        Label: {q.label}
+                    </Typography>
+                    )}
+
+                    {q.files.length === 0 ? (
+                    <Typography color="text.secondary">
+                        No files uploaded
+                    </Typography>
+                    ) : (
+                    <Stack spacing={0.5}>
+                        {q.files.map((f) => (
+                        <Typography
+                            key={f.object_key}
+                            sx={{ fontFamily: "monospace", fontSize: 13 }}
+                        >
+                            {f.filename} · {(f.size / 1024).toFixed(1)} KB
+                        </Typography>
+                        ))}
+                    </Stack>
+                    )}
+                </Stack>
+                </Box>
+            ))}
+            </Stack>
         </Stack>
-      </Stack>
-    </Container>
+        </Container>
   );
 }

@@ -1,10 +1,9 @@
 from .task import TaskModel
-from .dataset_split import DatasetSplitModel, SplitType
 from .query import QueryModel
+from .query_file import QueryFileModel
 
 __all__ = [
     "TaskModel",
-    "DatasetSplitModel",
-    "SplitType",
     "QueryModel",
+    "QueryFileModel",
 ]

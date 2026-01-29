@@ -4,6 +4,13 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
 from alembic import context
+from db.base import Base
+
+# Import ALL models so Alembic sees them
+from db.base import Base
+
+# Import model packages so all models register with Base.metadata
+import db.models.task  # noqa: F401
 
 # =========================
 # Path setup
@@ -25,9 +32,6 @@ fileConfig(config.config_file_name)
 # =========================
 # Metadata
 # =========================
-from db.base import Base
-from db.models.task.task import TaskModel  # import all models explicitly
-
 target_metadata = Base.metadata
 
 

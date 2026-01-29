@@ -33,19 +33,28 @@ export interface PresignedFile {
 }
 
 export interface QueryUpload {
-  query_id: number;
+  query_index: number;
   files: PresignedFile[];
 }
 
+
 export interface CreateTaskResponse {
-  task_id: number;
+  task_id: string;
   uploads: QueryUpload[];
 }
 
-export interface QuerySummary {
+export interface QueryFile {
+  filename: string;
+  object_key: string;
+  content_type: string;
+  size: number;
+}
+
+export interface QueryDetail {
   index: number;
   split: "test" | "validation";
   label: string;
+  files: QueryFile[];
 }
 
 export interface TaskDetail {
@@ -53,6 +62,5 @@ export interface TaskDetail {
   name: string;
   description: string;
   metric: string;
-  created_at: string;
-  queries: QuerySummary[];
+  queries: QueryDetail[];
 }

@@ -107,7 +107,8 @@ class _Settings:
 
         # ---- MinIO ----
         storage = cfg.get("storage", {}).get("minio", {})
-        self.MINIO_ENDPOINT = storage.get("endpoint")
+        self.MINIO_EXTERNAL_ENDPOINT = storage.get("external_endpoint")
+        self.MINIO_INTERNAL_ENDPOINT = storage.get("internal_endpoint")
         self.MINIO_ACCESS_KEY = storage.get("access_key")
         self.MINIO_SECRET_KEY = storage.get("secret_key")
         self.MINIO_BUCKET = storage.get("bucket")

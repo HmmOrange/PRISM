@@ -42,10 +42,24 @@ class QuerySummaryResponse(BaseModel):
     split: str
     label: str
 
+
+class QueryFileResponse(BaseModel):
+    filename: str
+    object_key: str
+    content_type: str
+    size: int
+
+
+class QueryDetailResponse(BaseModel):
+    index: int
+    split: str
+    label: str
+    files: List[QueryFileResponse]
+
+
 class TaskDetailResponse(BaseModel):
     id: str
     name: str
     description: str
     metric: str
-    created_at: datetime
-    queries: List[QuerySummaryResponse]
+    queries: List[QueryDetailResponse]

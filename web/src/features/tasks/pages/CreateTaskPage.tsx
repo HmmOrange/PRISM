@@ -4,7 +4,7 @@ import SectionCard from "../components/SectionCard";
 import TaskMetaForm from "../components/TaskMetaForm";
 import DatasetEditor from "../components/DatasetEditor";
 import type { QueryData } from "../types";
-import { createTask } from "../../../api/tasks.api";
+import { commitTaskFiles, createTask } from "../../../api/tasks.api";
 import { uploadTaskFiles } from "../../../utils/uploadExecutor";
 
 export default function CreateTaskPage() {
@@ -39,8 +39,12 @@ export default function CreateTaskPage() {
 
       const result = await createTask(payload);
 
-      // 🔑 Upload files AFTER task is created
-      await uploadTaskFiles(result, queries);
+      // Upload files AFTER task is created=
+      const committedFiles = await uploadTaskFiles(result, queries);
+
+      // Commit metadata
+      await commitTaskFiles(result.task_id, committedFiles);
+
 
       console.log("Task created and files uploaded");
 

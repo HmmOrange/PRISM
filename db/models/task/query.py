@@ -25,3 +25,9 @@ class QueryModel(Base):
 
     # Relationships
     task = relationship("TaskModel", back_populates="queries")
+    files = relationship(
+        "QueryFileModel",
+        back_populates="query",
+        cascade="all, delete-orphan",
+    )
+

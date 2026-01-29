@@ -10,7 +10,10 @@ from db.schemas.task.task_schema import (
     PresignedFileResponse,
     TaskDetailResponse,
     QuerySummaryResponse,
+    QueryDetailResponse,
+    QueryFileResponse,
 )
+from db.models.task.query_file import QueryFileModel
 
 from db.schemas.task.task_schema import TaskListResponse
 from storage.storage_factory import get_storage
@@ -123,9 +126,8 @@ def list_tasks(db: Session) -> list[TaskListResponse]:
 
 def get_task(db: Session, task_id: str) -> TaskDetailResponse:
     task = db.query(TaskModel).filter(TaskModel.id == task_id).first()
-
     if not task:
-        raise NoResultFound(f"Task {task_id} not found")
+        return None
 
     queries = (
         db.query(QueryModel)
@@ -134,17 +136,37 @@ def get_task(db: Session, task_id: str) -> TaskDetailResponse:
         .all()
     )
 
+    query_ids = [q.id for q in queries]
+
+    files = (
+        db.query(QueryFileModel)
+        .filter(QueryFileModel.query_id.in_(query_ids))
+        .all()
+    )
+
+    files_by_query = {}
+    for f in files:
+        files_by_query.setdefault(f.query_id, []).append(f)
+
     return TaskDetailResponse(
         id=str(task.id),
         name=task.name,
         description=task.description,
         metric=task.metric,
-        created_at=task.created_at,
         queries=[
-            QuerySummaryResponse(
+            QueryDetailResponse(
                 index=q.index,
                 split=q.split,
                 label=q.label,
+                files=[
+                    QueryFileResponse(
+                        filename=f.filename,
+                        object_key=f.object_key,
+                        content_type=f.content_type,
+                        size=f.size,
+                    )
+                    for f in files_by_query.get(q.id, [])
+                ],
             )
             for q in queries
         ],
