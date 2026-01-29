@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import List
 from db.schemas.task.query_schema import QueryCreateRequest
+from datetime import datetime
 
 class TaskCreateRequest(BaseModel):
     name: str
@@ -23,3 +24,15 @@ class QueryUploadResponse(BaseModel):
 class TaskCreateResponse(BaseModel):
     task_id: str
     uploads: List[QueryUploadResponse]
+
+class TaskListResponse(BaseModel):
+    id: str
+    name: str
+    description: str
+    metric: str
+
+    total_queries: int
+    test_queries: int
+    validation_queries: int
+
+    created_at: datetime

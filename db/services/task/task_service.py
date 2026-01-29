@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
-
+from sqlalchemy import func, case
 from db.models.task.task import TaskModel
 from db.models.task.query import QueryModel
-
 from db.schemas.task.task_schema import (
     TaskCreateRequest,
     TaskCreateResponse,
@@ -10,8 +9,9 @@ from db.schemas.task.task_schema import (
     PresignedFileResponse,
 )
 
-from storage.storage_factory import get_storage
 
+from db.schemas.task.task_schema import TaskListResponse
+from storage.storage_factory import get_storage
 
 def create_task(
     db: Session,
@@ -78,3 +78,43 @@ def create_task(
         task_id=str(task.id),
         uploads=uploads,
     )
+
+def list_tasks(db: Session) -> list[TaskListResponse]:
+    """
+    Return all tasks with aggregated query counts.
+    """
+
+    rows = (
+        db.query(
+            TaskModel.id,
+            TaskModel.name,
+            TaskModel.description,
+            TaskModel.metric,
+            TaskModel.created_at,
+            func.count(QueryModel.id).label("total_queries"),
+            func.sum(
+                case((QueryModel.split == "test", 1), else_=0)
+            ).label("test_queries"),
+            func.sum(
+                case((QueryModel.split == "validation", 1), else_=0)
+            ).label("validation_queries"),
+        )
+        .outerjoin(QueryModel, QueryModel.task_id == TaskModel.id)
+        .group_by(TaskModel.id)
+        .order_by(TaskModel.created_at.desc())
+        .all()
+    )
+
+    return [
+        TaskListResponse(
+            id=str(r.id),
+            name=r.name,
+            description=r.description,
+            metric=r.metric,
+            total_queries=r.total_queries or 0,
+            test_queries=r.test_queries or 0,
+            validation_queries=r.validation_queries or 0,
+            created_at=r.created_at,
+        )
+        for r in rows
+    ]

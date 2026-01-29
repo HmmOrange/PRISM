@@ -1,47 +1,6 @@
 import { apiFetch } from "./client";
+import type { TaskListItem, CreateTaskPayload, CreateTaskResponse } from "../types/tasks.types";
 
-/* =========================
-   Request types
-   ========================= */
-
-export interface CreateTaskPayload {
-  name: string;
-  metric: string;
-  description: string;
-  queries: {
-    id: number;
-    split: "test" | "validation";
-    label: string;
-    files: {
-      filename: string;
-      content_type: string;
-    }[];
-  }[];
-}
-
-/* =========================
-   Response types
-   ========================= */
-
-export interface PresignedFile {
-  filename: string;
-  upload_url: string;
-  object_key: string;
-}
-
-export interface QueryUpload {
-  query_id: number;
-  files: PresignedFile[];
-}
-
-export interface CreateTaskResponse {
-  task_id: number;
-  uploads: QueryUpload[];
-}
-
-/* =========================
-   API calls
-   ========================= */
 
 /**
  * Create a task and receive presigned upload URLs.
@@ -54,4 +13,12 @@ export async function createTask(
     method: "POST",
     body: JSON.stringify(payload),
   });
+}
+
+/**
+ * Get all tasks. 
+ */
+
+export function getTasks(): Promise<TaskListItem[]> {
+  return apiFetch<TaskListItem[]>("/tasks");
 }

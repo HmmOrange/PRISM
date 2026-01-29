@@ -29,7 +29,7 @@ export default function Navbar() {
 
           <Button
             component={RouterLink}
-            to={ROUTES.public.home}
+            to={ROUTES.public.tasks}
             color="inherit"
           >
             Tasks

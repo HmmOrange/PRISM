@@ -13,6 +13,10 @@ export const publicRoutes: RouteObject[] = [
         element: <TasksPage />,
       },
       {
+        path: ROUTES.public.tasks,
+        element: <TasksPage />,
+      },
+      {
         path: ROUTES.public.createTask,
         element: <CreateTaskPage />,
       },
