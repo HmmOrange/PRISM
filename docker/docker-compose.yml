@@ -1,0 +1,44 @@
+name: prism
+
+services:
+  tasks-server:
+    build:
+      context: ..
+      dockerfile: docker/dockerfile/Dockerfile.tasks_server
+    container_name: prism_tasks_server
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../configs:/app/configs
+    depends_on:
+      - postgres
+      - minio
+
+  postgres:
+    image: postgres:15
+    container_name: prism_postgres
+    environment:
+      POSTGRES_USER: prism
+      POSTGRES_PASSWORD: prism
+      POSTGRES_DB: prism
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio:latest
+    container_name: prism_minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+
+volumes:
+  postgres_data:
+  minio_data:

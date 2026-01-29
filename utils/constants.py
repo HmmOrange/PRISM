@@ -94,3 +94,40 @@ if config["proxy"]:
     PROXY = {
         "https": config["proxy"],
     }
+
+class _Settings:
+    def __init__(self, cfg: dict):
+        # ---- DB ----
+        db = cfg.get("db", {})
+        self.DB_HOST = db.get("host")
+        self.DB_PORT = db.get("port")
+        self.DB_NAME = db.get("name")
+        self.DB_USER = db.get("user")
+        self.DB_PASSWORD = db.get("password")
+
+        # ---- MinIO ----
+        storage = cfg.get("storage", {}).get("minio", {})
+        self.MINIO_ENDPOINT = storage.get("endpoint")
+        self.MINIO_ACCESS_KEY = storage.get("access_key")
+        self.MINIO_SECRET_KEY = storage.get("secret_key")
+        self.MINIO_BUCKET = storage.get("bucket")
+        self.MINIO_SECURE = storage.get("secure", False)
+
+        # ---- Server ----
+        server = cfg.get("server", {})
+        self.SERVER_HOST = server.get("host", "0.0.0.0")
+        self.SERVER_PORT = server.get("port", 8000)
+
+        # ---- CORS ----
+        cors = cfg.get("cors", {})
+        self.CORS_ALLOW_ORIGINS = cors.get("allow_origins", [])
+        self.CORS_ALLOW_METHODS = cors.get("allow_methods", ["*"])
+        self.CORS_ALLOW_HEADERS = cors.get("allow_headers", ["*"])
+        self.CORS_ALLOW_CREDENTIALS = cors.get("allow_credentials", False)
+
+# Public singleton
+SETTINGS = _Settings(config)
+DATABASE_URL = (
+    f"postgresql+psycopg2://{SETTINGS.DB_USER}:{SETTINGS.DB_PASSWORD}"
+    f"@{SETTINGS.DB_HOST}:{SETTINGS.DB_PORT}/{SETTINGS.DB_NAME}"
+)
