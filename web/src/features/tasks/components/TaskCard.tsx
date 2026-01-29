@@ -1,14 +1,19 @@
 import { Card, CardContent, Typography, Stack, Chip } from "@mui/material";
 import TaskStats from "./TaskStats";
 import type { TaskListItem } from "../../../types/tasks.types";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   task: TaskListItem;
 }
 
+
 export default function TaskCard({ task }: Props) {
+  const navigate = useNavigate();
+
   return (
     <Card
+      onClick={() => navigate(`/tasks/${task.id}`)}
       sx={{
         height: "100%",
         transition: "0.2s",

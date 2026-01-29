@@ -3,6 +3,7 @@ import { ROUTES } from "../config/routes";
 import MainLayout from "../components/layout/MainLayout";
 import TasksPage from "../features/tasks/pages/TasksPage";
 import CreateTaskPage from "../features/tasks/pages/CreateTaskPage";
+import TaskDetailPage from "../features/tasks/pages/TaskDetailPage";
 
 export const publicRoutes: RouteObject[] = [
   {
@@ -20,6 +21,10 @@ export const publicRoutes: RouteObject[] = [
         path: ROUTES.public.createTask,
         element: <CreateTaskPage />,
       },
+      {
+        path: ROUTES.public.taskDetail,
+        element: <TaskDetailPage />
+      }
     ],
   },
 ];

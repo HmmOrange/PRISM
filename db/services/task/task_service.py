@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func, case
+from sqlalchemy.exc import NoResultFound
 from db.models.task.task import TaskModel
 from db.models.task.query import QueryModel
 from db.schemas.task.task_schema import (
@@ -7,8 +8,9 @@ from db.schemas.task.task_schema import (
     TaskCreateResponse,
     QueryUploadResponse,
     PresignedFileResponse,
+    TaskDetailResponse,
+    QuerySummaryResponse,
 )
-
 
 from db.schemas.task.task_schema import TaskListResponse
 from storage.storage_factory import get_storage
@@ -118,3 +120,32 @@ def list_tasks(db: Session) -> list[TaskListResponse]:
         )
         for r in rows
     ]
+
+def get_task(db: Session, task_id: str) -> TaskDetailResponse:
+    task = db.query(TaskModel).filter(TaskModel.id == task_id).first()
+
+    if not task:
+        raise NoResultFound(f"Task {task_id} not found")
+
+    queries = (
+        db.query(QueryModel)
+        .filter(QueryModel.task_id == task.id)
+        .order_by(QueryModel.index)
+        .all()
+    )
+
+    return TaskDetailResponse(
+        id=str(task.id),
+        name=task.name,
+        description=task.description,
+        metric=task.metric,
+        created_at=task.created_at,
+        queries=[
+            QuerySummaryResponse(
+                index=q.index,
+                split=q.split,
+                label=q.label,
+            )
+            for q in queries
+        ],
+    )

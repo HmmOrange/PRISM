@@ -1,5 +1,5 @@
 import { apiFetch } from "./client";
-import type { TaskListItem, CreateTaskPayload, CreateTaskResponse } from "../types/tasks.types";
+import type { TaskListItem, TaskDetail, CreateTaskPayload, CreateTaskResponse } from "../types/tasks.types";
 
 
 /**
@@ -21,4 +21,11 @@ export async function createTask(
 
 export function getTasks(): Promise<TaskListItem[]> {
   return apiFetch<TaskListItem[]>("/tasks");
+}
+/**
+ * Get task details by ID.  
+ */
+
+export function getTask(taskId: string): Promise<TaskDetail> {
+  return apiFetch<TaskDetail>(`/tasks/${taskId}`);
 }

@@ -41,3 +41,18 @@ export interface CreateTaskResponse {
   task_id: number;
   uploads: QueryUpload[];
 }
+
+export interface QuerySummary {
+  index: number;
+  split: "test" | "validation";
+  label: string;
+}
+
+export interface TaskDetail {
+  id: string;
+  name: string;
+  description: string;
+  metric: string;
+  created_at: string;
+  queries: QuerySummary[];
+}

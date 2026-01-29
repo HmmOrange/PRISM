@@ -36,3 +36,16 @@ class TaskListResponse(BaseModel):
     validation_queries: int
 
     created_at: datetime
+
+class QuerySummaryResponse(BaseModel):
+    index: int
+    split: str
+    label: str
+
+class TaskDetailResponse(BaseModel):
+    id: str
+    name: str
+    description: str
+    metric: str
+    created_at: datetime
+    queries: List[QuerySummaryResponse]

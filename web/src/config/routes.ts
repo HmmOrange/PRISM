@@ -5,6 +5,7 @@ export const ROUTES = {
     createTask: "/tasks/new",
     login: "/login",
     register: "/register",
+    taskDetail: "/tasks/:taskId",
   },
   authed: {
     tasks: "/tasks",
