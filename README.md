@@ -1,5 +1,11 @@
 # PRISM
 
+```
+cd docker
+docker compose up -d --build
+docker exec -it prism_tasks_server alembic upgrade head
+```
+
 ## Setup
 
 ### Create and activate virtual environment
