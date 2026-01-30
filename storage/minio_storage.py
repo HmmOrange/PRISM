@@ -25,6 +25,7 @@ class MinIOStorage(BaseStorage):
             secure=secure,
         )
 
+        self.endpoint_external = endpoint_external
         if not self.client.bucket_exists(bucket):
             self.client.make_bucket(bucket)
 
@@ -46,7 +47,7 @@ class MinIOStorage(BaseStorage):
         fields = self.client.presigned_post_policy(policy)
 
         return {
-            "url": f"/storage/upload/{self.bucket}",
+            "url": f"http://{self.endpoint_external}/{self.bucket}",
             "fields": fields,
         }
 
