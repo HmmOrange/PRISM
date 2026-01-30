@@ -26,17 +26,17 @@ export interface CreateTaskPayload {
   }[];
 }
 
-export interface PresignedFile {
+export interface PresignedPost {
   filename: string;
-  upload_url: string;
   object_key: string;
+  url: string;
+  fields: Record<string, string>;
 }
 
 export interface QueryUpload {
   query_index: number;
-  files: PresignedFile[];
+  files: PresignedPost[];
 }
-
 
 export interface CreateTaskResponse {
   task_id: string;
@@ -44,14 +44,16 @@ export interface CreateTaskResponse {
 }
 
 export interface QueryFile {
+  id: string;
   filename: string;
   object_key: string;
   content_type: string;
   size: number;
+  download_url: string;
 }
 
 export interface QueryDetail {
-  index: number;
+  index: number; // 0..N-1
   split: "test" | "validation";
   label: string;
   files: QueryFile[];
@@ -63,4 +65,17 @@ export interface TaskDetail {
   description: string;
   metric: string;
   queries: QueryDetail[];
+}
+
+export interface LocalQueryFile {
+  id: string;
+  file: File;
+}
+
+export interface EditableQuery {
+  id: number; // 0..N-1
+  name: string;
+  split: "test" | "validation";
+  label: string;
+  files: LocalQueryFile[];
 }

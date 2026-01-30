@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict, Any
 from db.schemas.task.query_schema import QueryCreateRequest
 from datetime import datetime
 
@@ -11,10 +11,10 @@ class TaskCreateRequest(BaseModel):
 
 
 class PresignedFileResponse(BaseModel):
-    filename: str
-    upload_url: str
-    object_key: str
-
+    filename: str         
+    object_key: str        
+    url: str                  
+    fields: Dict[str, Any] 
 
 class QueryUploadResponse(BaseModel):
     query_index: int
@@ -48,6 +48,7 @@ class QueryFileResponse(BaseModel):
     object_key: str
     content_type: str
     size: int
+    download_url: str
 
 
 class QueryDetailResponse(BaseModel):

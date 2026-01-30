@@ -1,30 +1,21 @@
-import { rawFetch } from "../api/client";
 import type { CreateTaskResponse } from "../types/tasks.types";
 import type { QueryData } from "../features/tasks/types";
 
 /**
- * Upload all files for a created task using presigned URLs.
+ * Upload all files for a created task using presigned POST policies.
  *
  * Guarantees:
+ * - Uses multipart/form-data (POST)
  * - No JSON headers
- * - PUT uploads only
- * - Resume-safe (re-run = overwrite same object_key)
+ * - Resume-safe (re-run overwrites same object_key)
  */
 export async function uploadTaskFiles(
   result: CreateTaskResponse,
   queries: QueryData[]
 ) {
-  const committedFiles: {
-    query_index: number;
-    filename: string;
-    object_key: string;
-    content_type: string;
-    size: number;
-  }[] = [];
+  const committedFiles = [];
 
-  // Build lookup: query_index -> filename -> File
   const fileMap = new Map<number, Map<string, File>>();
-
   for (const q of queries) {
     const m = new Map<string, File>();
     for (const f of q.files) {
@@ -33,7 +24,6 @@ export async function uploadTaskFiles(
     fileMap.set(q.id, m);
   }
 
-  // Upload files
   for (const queryUpload of result.uploads) {
     const qFiles = fileMap.get(queryUpload.query_index);
     if (!qFiles) continue;
@@ -42,9 +32,17 @@ export async function uploadTaskFiles(
       const file = qFiles.get(fileInfo.filename);
       if (!file) continue;
 
-      await rawFetch(fileInfo.upload_url, {
-        method: "PUT",
-        body: file,
+      const form = new FormData();
+      form.append("key", fileInfo.object_key);
+      form.append("Content-Type", file.type);
+      Object.entries(fileInfo.fields).forEach(([k, v]) =>
+        form.append(k, v as string)
+      );
+      form.append("file", file);
+
+      await fetch(fileInfo.url, {
+        method: "POST",
+        body: form,
       });
 
       committedFiles.push({
@@ -59,3 +57,4 @@ export async function uploadTaskFiles(
 
   return committedFiles;
 }
+

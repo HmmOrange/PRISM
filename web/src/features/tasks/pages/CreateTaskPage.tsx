@@ -39,6 +39,12 @@ export default function CreateTaskPage() {
 
       const result = await createTask(payload);
 
+      const hasFiles = queries.some((q) => q.files.length > 0);
+      if (!hasFiles) {
+        console.log("Task created (no files)");
+        return;
+      }
+      
       // Upload files AFTER task is created=
       const committedFiles = await uploadTaskFiles(result, queries);
 

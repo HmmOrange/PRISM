@@ -1,22 +1,24 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func, case
 from sqlalchemy.exc import NoResultFound
+
 from db.models.task.task import TaskModel
 from db.models.task.query import QueryModel
+from db.models.task.query_file import QueryFileModel
+
 from db.schemas.task.task_schema import (
     TaskCreateRequest,
     TaskCreateResponse,
     QueryUploadResponse,
     PresignedFileResponse,
     TaskDetailResponse,
-    QuerySummaryResponse,
     QueryDetailResponse,
     QueryFileResponse,
+    TaskListResponse,
 )
-from db.models.task.query_file import QueryFileModel
 
-from db.schemas.task.task_schema import TaskListResponse
 from storage.storage_factory import get_storage
+
 
 def create_task(
     db: Session,
@@ -24,52 +26,49 @@ def create_task(
 ) -> TaskCreateResponse:
     storage = get_storage()
 
-    # 1️⃣ Create task
     task = TaskModel(
         name=payload.name,
         description=payload.description,
         metric=payload.metric,
     )
     db.add(task)
-    db.flush()  # ensures task.id is available
+    db.flush()
 
-    # 2️⃣ Create queries (DB state only, ONCE)
     for q in payload.queries:
-        query = QueryModel(
-            task_id=task.id,
-            index=q.id,          # 0..N-1 (frontend enforces ordering)
-            split=q.split,
-            label=q.label or "",
+        db.add(
+            QueryModel(
+                task_id=task.id,
+                index=q.id,
+                split=q.split,
+                label=q.label or "",
+            )
         )
-        db.add(query)
 
-    # 3️⃣ Commit DB state
     db.commit()
     db.refresh(task)
 
-    # 4️⃣ Generate presigned upload URLs (NO DB WRITES)
     uploads: list[QueryUploadResponse] = []
 
     for q in payload.queries:
         files: list[PresignedFileResponse] = []
 
         for f in q.files:
-            object_key = (
-                f"tasks/{task.id}/"
-                f"{q.split}/input/{q.id}/{f.filename}"
-            )
+            object_key = f"{task.id}/{q.split}/input/{q.id}/{f.filename}"
 
-            upload_url = storage.generate_presigned_upload_url(
+            post = storage.generate_presigned_upload_post(
                 object_key=object_key,
+                content_type=f.content_type,
             )
 
             files.append(
                 PresignedFileResponse(
                     filename=f.filename,
-                    upload_url=upload_url,
                     object_key=object_key,
+                    url=post["url"],
+                    fields=post["fields"],
                 )
             )
+
 
         uploads.append(
             QueryUploadResponse(
@@ -78,17 +77,13 @@ def create_task(
             )
         )
 
-    # 5️⃣ Return response
     return TaskCreateResponse(
         task_id=str(task.id),
         uploads=uploads,
     )
 
-def list_tasks(db: Session) -> list[TaskListResponse]:
-    """
-    Return all tasks with aggregated query counts.
-    """
 
+def list_tasks(db: Session) -> list[TaskListResponse]:
     rows = (
         db.query(
             TaskModel.id,
@@ -124,10 +119,11 @@ def list_tasks(db: Session) -> list[TaskListResponse]:
         for r in rows
     ]
 
+
 def get_task(db: Session, task_id: str) -> TaskDetailResponse:
     task = db.query(TaskModel).filter(TaskModel.id == task_id).first()
     if not task:
-        return None
+        raise NoResultFound()
 
     queries = (
         db.query(QueryModel)
@@ -144,7 +140,7 @@ def get_task(db: Session, task_id: str) -> TaskDetailResponse:
         .all()
     )
 
-    files_by_query = {}
+    files_by_query: dict[int, list[QueryFileModel]] = {}
     for f in files:
         files_by_query.setdefault(f.query_id, []).append(f)
 
@@ -164,6 +160,8 @@ def get_task(db: Session, task_id: str) -> TaskDetailResponse:
                         object_key=f.object_key,
                         content_type=f.content_type,
                         size=f.size,
+                        # 🔑 backend proxy, NOT presigned
+                        download_url=f"/storage/download?object_key={f.object_key}",
                     )
                     for f in files_by_query.get(q.id, [])
                 ],
