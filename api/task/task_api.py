@@ -1,19 +1,21 @@
-
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
 from db.session import get_db
 from db.schemas.task.task_schema import (
     TaskCreateRequest,
     TaskCreateResponse,
+    TaskListResponse,
+    TaskDetailResponse,
 )
-from db.schemas.task.task_schema import TaskListResponse
-from db.schemas.task.task_schema import TaskDetailResponse
-from db.services.task.task_service import create_task
-from db.services.task.task_service import list_tasks
-from db.services.task.task_service import get_task
+from db.services.task.task_service import (
+    create_task,
+    list_tasks,
+    get_task,
+    delete_task,   # ✅ NEW
+)
 from db.schemas.task.file_schema import CommitFilesRequest
 from db.services.task.file_service import commit_files
 
@@ -28,6 +30,7 @@ def create_task_api(
 ):
     return create_task(db, payload)
 
+
 @router.get(
     "",
     response_model=List[TaskListResponse],
@@ -35,6 +38,7 @@ def create_task_api(
 )
 def list_tasks_api(db: Session = Depends(get_db)):
     return list_tasks(db)
+
 
 @router.get(
     "/{task_id}",
@@ -49,7 +53,23 @@ def get_task_api(
         return get_task(db, task_id)
     except NoResultFound:
         raise HTTPException(status_code=404, detail="Task not found")
-        
+
+
+@router.delete(
+    "/{task_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete a task",
+)
+def delete_task_api(
+    task_id: str,
+    db: Session = Depends(get_db),
+):
+    try:
+        delete_task(db, task_id)
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+
 @router.post(
     "/{task_id}/files/commit",
     summary="Commit uploaded files metadata",

@@ -25,6 +25,11 @@ export async function apiFetch<T>(
     );
   }
 
+  // Make sure to handle 204 No Content responses
+  if (res.status === 204) {
+    return undefined as T;
+  }
+
   return res.json() as Promise<T>;
 }
 

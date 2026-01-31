@@ -109,6 +109,7 @@ web/
     │       ├── components/
     │       │   ├── TaskMetaForm.tsx
     │       │   ├── QueryAccordion.tsx
+    │       │   ├── ...
     │       │   └── QueryFilesPanel.tsx
     │       │
     │       ├── pages/

@@ -169,3 +169,26 @@ def get_task(db: Session, task_id: str) -> TaskDetailResponse:
             for q in queries
         ],
     )
+
+def delete_task(db: Session, task_id: str) -> None:
+    task = db.query(TaskModel).filter(TaskModel.id == task_id).first()
+    if not task:
+        raise NoResultFound()
+
+    # Delete files → queries → task
+    query_ids = (
+        db.query(QueryModel.id)
+        .filter(QueryModel.task_id == task.id)
+        .subquery()
+    )
+
+    db.query(QueryFileModel).filter(
+        QueryFileModel.query_id.in_(query_ids)
+    ).delete(synchronize_session=False)
+
+    db.query(QueryModel).filter(
+        QueryModel.task_id == task.id
+    ).delete(synchronize_session=False)
+
+    db.delete(task)
+    db.commit()

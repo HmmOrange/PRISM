@@ -29,6 +29,15 @@ export function getTask(taskId: string): Promise<TaskDetail> {
   return apiFetch<TaskDetail>(`/tasks/${taskId}`);
 }
 
+/**
+ * Delete a task by ID.
+ */
+export function deleteTask(taskId: string): Promise<void> {
+  return apiFetch(`/tasks/${taskId}`, {
+    method: "DELETE",
+  });
+}
+
 export interface CommitFilePayload {
   query_index: number;
   filename: string;
@@ -46,3 +55,4 @@ export function commitTaskFiles(
     body: JSON.stringify({ files }),
   });
 }
+

@@ -15,10 +15,19 @@ export default function TasksPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    reloadTasks();
+  }, []);
+
+  function reloadTasks() {
+    setLoading(true);
     getTasks()
       .then(setTasks)
       .finally(() => setLoading(false));
-  }, []);
+  }
+
+  function handleTaskDeleted(taskId: string) {
+    setTasks((prev) => prev.filter((t) => t.id !== taskId));
+  }
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
@@ -31,7 +40,10 @@ export default function TasksPage() {
           <CircularProgress />
         </Box>
       ) : (
-        <TaskCardGrid tasks={tasks} />
+        <TaskCardGrid
+          tasks={tasks}
+          onTaskDeleted={handleTaskDeleted}
+        />
       )}
     </Container>
   );
