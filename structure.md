@@ -1,10 +1,12 @@
-## Task structure
+## Task structure 
+
+This is the previous structure. The tasks are stored as folders on system. We are changing to using database and expand further for production.
 
 task/
 ├── task_description.txt
 ├── metadata.json (Only has { metric: "..." })
 ├── test/
-│   ├── labels.csv
+│   ├── labels.csv (Two columns id and label)
 │   └── input/
 │       ├── 0/
 │       │   └── <data files>
@@ -95,9 +97,11 @@ web/
     │   └── AppProviders.tsx
     │
     ├── components/
-    │   └── layout/
-    │       ├── MainLayout.tsx
-    │       └── AppBar.tsx
+    │   ├── layout/
+    │   │   ├── MainLayout.tsx
+    │   │   └── AppBar.tsx
+    │   └── feedback/
+    │       └── ToastProvider.tsx
     │
     ├── config/
     │   ├── api.ts
@@ -134,3 +138,10 @@ web/
     │
     ├── main.tsx
     └── vite-env.d.ts
+
+TODO:
+- Add proper display of query name, split type, label in one row. Same goes for task metadata
+- Add feedback for task upload/deletion failure
+- Add edit tasks (obviously, duh)
+- Add a field for task tags (e.g. `cot`, `fewshot`, `graph-level`, `node-level`,...)
+- Add filters for task tags

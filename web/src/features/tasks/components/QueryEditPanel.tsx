@@ -1,4 +1,11 @@
-import { Stack, TextField } from "@mui/material";
+import {
+  Stack,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import QueryFilesPanel from "./QueryFilesPanel";
 
 import type { EditableQuery } from "../../../types/tasks.types";
@@ -24,6 +31,23 @@ export default function QueryEditPanel({
           onUpdate({ ...query, name: e.target.value })
         }
       />
+
+      <FormControl size="small">
+        <InputLabel>Dataset split</InputLabel>
+        <Select
+          label="Dataset split"
+          value={query.split}
+          onChange={(e) =>
+            onUpdate({
+              ...query,
+              split: e.target.value as "test" | "validation",
+            })
+          }
+        >
+          <MenuItem value="test">Test</MenuItem>
+          <MenuItem value="validation">Validation</MenuItem>
+        </Select>
+      </FormControl>
 
       <TextField
         label="Label"

@@ -51,7 +51,7 @@ export default function DatasetEditor({ queries, setQueries }: Props) {
           query={q}
           onUpdate={updateQuery}
           onDeleteFile={(fid) => deleteFile(q.id, fid)}
-          onRemoveQuery={() => removeQuery(q.id)}
+          mode="edit"
         />
       ))}
 
