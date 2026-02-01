@@ -10,12 +10,20 @@ export async function apiFetch<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
+  
+  // Normalize headers to a plain object
+  const headers: Record<string, string> = {
+    ...(options.headers as Record<string, string> | undefined),
+  };
+
+  // Only set JSON header when body is NOT FormData
+  if (!(options.body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const res = await fetch(`${API_CONFIG.baseUrl}${path}`, {
     ...options,
-    headers: {
-      ...(options.headers || {}),
-      "Content-Type": "application/json",
-    },
+    headers,
   });
 
   if (!res.ok) {
@@ -25,7 +33,7 @@ export async function apiFetch<T>(
     );
   }
 
-  // Make sure to handle 204 No Content responses
+  // Handle 204 No Content
   if (res.status === 204) {
     return undefined as T;
   }

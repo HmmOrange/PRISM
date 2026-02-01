@@ -15,6 +15,22 @@ export async function createTask(
 }
 
 /**
+ * Import a task from a ZIP file.
+ * Creates the task immediately.
+ */
+export async function importTaskFromZip(
+  file: File
+): Promise<TaskDetail> {
+  const formData = new FormData();
+  formData.append("zip_file", file);
+
+  return apiFetch<TaskDetail>("/tasks/import/zip", {
+    method: "POST",
+    body: formData,
+  });
+}
+
+/**
  * Get all tasks. 
  */
 

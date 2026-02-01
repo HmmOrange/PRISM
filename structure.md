@@ -6,8 +6,8 @@ task/
 ├── task_description.txt
 ├── metadata.json (Only has { metric: "..." })
 ├── test/
-│   ├── labels.csv (Two columns id and label)
-│   └── input/
+│   ├── labels.csv (Header row: id, label)
+│   └── inputs/
 │       ├── 0/
 │       │   └── <data files>
 │       ├── 1/
@@ -15,7 +15,7 @@ task/
 │       └── ...
 └── validation/
     ├── labels.csv
-    └── input/
+    └── inputs/
         ├── 0/
         │   └── <data files>
         ├── 1/
@@ -52,6 +52,8 @@ PRISM/
 │   │
 │   └── services/
 │       └── task/
+│           ├── file_service.py
+│           ├── task_zip_service.py
 │           └── task_service.py
 │
 ├── server/

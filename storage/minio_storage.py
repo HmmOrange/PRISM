@@ -57,3 +57,16 @@ class MinIOStorage(BaseStorage):
             self.bucket,
             object_key,
         )
+
+    def upload_file(
+        self,
+        object_key: str,
+        file_path: str,
+        content_type: str | None = None,
+    ):
+        self.client.fput_object(
+            bucket_name=self.bucket,
+            object_name=object_key,
+            file_path=file_path,
+            content_type=content_type,
+        )

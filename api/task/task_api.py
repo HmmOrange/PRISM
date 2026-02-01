@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import UploadFile, File, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
 from db.session import get_db
@@ -14,8 +15,9 @@ from db.services.task.task_service import (
     create_task,
     list_tasks,
     get_task,
-    delete_task,   # ✅ NEW
+    delete_task,
 )
+from db.services.task.task_zip_service import create_task_from_zip
 from db.schemas.task.file_schema import CommitFilesRequest
 from db.services.task.file_service import commit_files
 
@@ -81,3 +83,14 @@ def commit_files_api(
 ):
     commit_files(db, task_id, payload)
     return {"status": "ok"}
+
+@router.post(
+    "/import/zip",
+    response_model=TaskDetailResponse,
+    summary="Create task from ZIP archive",
+)
+def import_task_from_zip_api(
+    zip_file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    return create_task_from_zip(db, zip_file)

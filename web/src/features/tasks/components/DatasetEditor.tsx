@@ -27,11 +27,11 @@ export default function DatasetEditor({ queries, setQueries }: Props) {
     );
   }
 
-  function removeQuery(queryId: number) {
-    const filtered = queries.filter((q) => q.id !== queryId);
-    // reindex to keep 0..N-1
-    setQueries(filtered.map((q, idx) => ({ ...q, id: idx })));
-  }
+  // function removeQuery(queryId: number) {
+  //   const filtered = queries.filter((q) => q.id !== queryId);
+  //   // reindex to keep 0..N-1
+  //   setQueries(filtered.map((q, idx) => ({ ...q, id: idx })));
+  // }
 
   function deleteFile(queryId: number, fileId: string) {
     setQueries(

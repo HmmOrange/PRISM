@@ -192,3 +192,41 @@ def delete_task(db: Session, task_id: str) -> None:
 
     db.delete(task)
     db.commit()
+
+def _create_task_and_queries(
+    db: Session,
+    *,
+    name: str,
+    description: str,
+    metric: str,
+    queries: list[dict],
+):
+    """
+    Creates TaskModel and QueryModel rows.
+    Returns:
+        task: TaskModel
+        query_models: list[QueryModel] (IDs are populated)
+    """
+    task = TaskModel(
+        name=name,
+        description=description,
+        metric=metric,
+    )
+    db.add(task)
+    db.flush()  # assigns task.id
+
+    query_models: list[QueryModel] = []
+
+    for q in queries:
+        qm = QueryModel(
+            task_id=task.id,
+            index=q["index"],
+            split=q["split"],
+            label=q.get("label", ""),
+        )
+        db.add(qm)
+        query_models.append(qm)
+
+    db.flush()  # assigns QueryModel.id
+
+    return task, query_models
