@@ -14,9 +14,9 @@ RUN apt-get update && apt-get install -y \
 COPY pyproject.toml poetry.lock* LICENSE /app/
 
 RUN pip install --upgrade pip \
- && pip install poetry \
- && poetry config virtualenvs.create false \
- && poetry install --no-interaction --no-ansi \
+#  && pip install poetry \
+#  && poetry config virtualenvs.create false \
+#  && poetry install --no-interaction --no-ansi \
  && pip install .[tasks]
 
 
@@ -30,6 +30,14 @@ COPY configs /app/configs
 COPY docker/entrypoint.sh /app/docker/entrypoint.sh
 COPY alembic.ini /app/alembic.ini
 COPY alembic /app/alembic
+COPY scripts /app/scripts
+COPY results /app/results
+COPY tasks /app/tasks
+COPY utils /app/utils
+COPY templates /app/templates
+COPY prism /app/prism
+COPY pipeline /app/pipeline
+COPY data /app/data
 
 RUN chmod +x /app/docker/entrypoint.sh
 

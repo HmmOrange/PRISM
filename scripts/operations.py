@@ -6,7 +6,7 @@ import time
 import pandas as pd
 
 from utils.logs import logger
-from scripts.calculator import Calculator, MetricType
+# from scripts.calculator import Calculator, MetricType
 from scripts.data import (
     load_data, load_metadata, load_task_description, 
     load_label, load_prediction, load_task_dirs
@@ -61,6 +61,9 @@ async def generate_workflow_for_task(task_dir, save_dir, pipeline_path, rounds, 
         tqdm.write(f"[{p_name}] Generation time: {generation_time} seconds, Cost: {cost}")
         round_num = round if rounds > 1 else None
         save_task_dir = get_save_task_dir(task_dir, save_dir)
+
+        print("WORKFLOW STRING LENGTH:", len(workflow))
+        print("WORKFLOW PREVIEW:", repr(workflow[:200]))
         write_workflow(save_task_dir, workflow, round_num=round_num)
         results.append({
             "id": f"{task_name}_round_{round_num}" if round_num is not None else task_name,

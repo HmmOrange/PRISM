@@ -6,6 +6,7 @@ export const ROUTES = {
     login: "/login",
     register: "/register",
     taskDetail: "/tasks/:taskId",
+    runTasks: "/run",
   },
   authed: {
     tasks: "/tasks",

@@ -111,19 +111,29 @@ web/
     │   └── routes.ts
     │
     ├── features/
-    │   └── tasks/
+    │   ├── tasks/
+    │   │   ├── components/
+    │   │   │   ├── TaskMetaForm.tsx
+    │   │   │   ├── QueryAccordion.tsx
+    │   │   │   └── QueryFilesPanel.tsx
+    │   │   ├── pages/
+    │   │   │   ├── CreateTaskPage.tsx
+    │   │   │   ├── TaskDetailPage.tsx
+    │   │   │   └── TasksPage.tsx
+    │   │   ├── index.ts
+    │   │   └── types.ts
+    │   │
+    │   └── workflows/
     │       ├── components/
-    │       │   ├── TaskMetaForm.tsx
-    │       │   ├── QueryAccordion.tsx
-    │       │   ├── ...
-    │       │   └── QueryFilesPanel.tsx
-    │       │
-    │       ├── pages/
-    │       │   ├── CreateTaskPage.tsx
-    │       │   └── TasksPage.tsx
-    │       │
-    │       ├── types.ts
-    │       └── index.ts
+    │       │   ├── PipelinePicker.tsx
+    │       │   ├── RunProgress.tsx
+    │       │   ├── RunResults.tsx
+    │       │   ├── StepperHeader.tsx
+    │       │   └── TaskPicker.tsx
+    │       ├── hooks/
+    │       │   └── useRunWorkflowWizard.ts
+    │       └── pages/
+    │           └── RunPage.tsx
     │
     ├── routes/
     │   ├── authed.routes.tsx

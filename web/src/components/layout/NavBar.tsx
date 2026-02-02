@@ -39,7 +39,6 @@ export default function Navbar() {
             component={RouterLink}
             to={ROUTES.authed.run}
             color="inherit"
-            disabled
           >
             Run
           </Button>

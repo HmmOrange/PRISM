@@ -10,6 +10,9 @@ services:
       - "8000:8000"
     volumes:
       - ../configs:/app/configs
+      - ../db:/app/db
+      - ../api:/app/api 
+      - ../server:/app/server
     depends_on:
       - postgres
       - minio

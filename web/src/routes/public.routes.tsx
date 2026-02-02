@@ -4,6 +4,7 @@ import MainLayout from "../components/layout/MainLayout";
 import TasksPage from "../features/tasks/pages/TasksPage";
 import CreateTaskPage from "../features/tasks/pages/CreateTaskPage";
 import TaskDetailPage from "../features/tasks/pages/TaskDetailPage";
+import RunPage from "../features/workflows/pages/RunPage";
 
 export const publicRoutes: RouteObject[] = [
   {
@@ -24,6 +25,10 @@ export const publicRoutes: RouteObject[] = [
       {
         path: ROUTES.public.taskDetail,
         element: <TaskDetailPage />
+      },
+      {
+        path: ROUTES.public.runTasks,
+        element: <RunPage />
       }
     ],
   },
