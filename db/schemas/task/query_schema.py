@@ -9,6 +9,7 @@ class QueryFileRequest(BaseModel):
 
 class QueryCreateRequest(BaseModel):
     id: int = Field(ge=0)
+    name: str = ""
     split: str
     label: str = ""
     files: List[QueryFileRequest]

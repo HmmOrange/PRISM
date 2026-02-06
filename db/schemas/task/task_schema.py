@@ -53,6 +53,7 @@ class QueryFileResponse(BaseModel):
 
 class QueryDetailResponse(BaseModel):
     index: int
+    name: str
     split: str
     label: str
     files: List[QueryFileResponse]
@@ -64,3 +65,22 @@ class TaskDetailResponse(BaseModel):
     description: str
     metric: str
     queries: List[QueryDetailResponse]
+
+class UpdateTaskQueryRequest(BaseModel):
+    id: int
+    name: str = ""
+    split: str
+    label: str
+    files: list["UpdateTaskFileRequest"]
+
+
+class UpdateTaskFileRequest(BaseModel):
+    filename: str
+    content_type: str
+
+
+class TaskUpdateRequest(BaseModel):
+    name: str
+    description: str
+    metric: str
+    queries: List[UpdateTaskQueryRequest]

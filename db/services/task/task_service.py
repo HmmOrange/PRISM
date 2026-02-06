@@ -39,6 +39,7 @@ def create_task(
             QueryModel(
                 task_id=task.id,
                 index=q.id,
+                name=getattr(q, 'name', '') or "",
                 split=q.split,
                 label=q.label or "",
             )
@@ -152,6 +153,7 @@ def get_task(db: Session, task_id: str) -> TaskDetailResponse:
         queries=[
             QueryDetailResponse(
                 index=q.index,
+                name=q.name or "",
                 split=q.split,
                 label=q.label,
                 files=[
@@ -221,6 +223,7 @@ def _create_task_and_queries(
         qm = QueryModel(
             task_id=task.id,
             index=q["index"],
+            name=q.get("name", ""),
             split=q["split"],
             label=q.get("label", ""),
         )
@@ -230,3 +233,86 @@ def _create_task_and_queries(
     db.flush()  # assigns QueryModel.id
 
     return task, query_models
+
+def update_task(
+    db: Session,
+    task_id: str,
+    payload,
+) -> TaskCreateResponse:
+    storage = get_storage()
+
+    task = db.query(TaskModel).filter(TaskModel.id == task_id).first()
+    if not task:
+        raise NoResultFound()
+
+    # ---- Update task metadata ----
+    task.name = payload.name
+    task.description = payload.description
+    task.metric = payload.metric
+
+    # ---- Delete existing queries + files ----
+    query_ids = (
+        db.query(QueryModel.id)
+        .filter(QueryModel.task_id == task.id)
+        .subquery()
+    )
+
+    db.query(QueryFileModel).filter(
+        QueryFileModel.query_id.in_(query_ids)
+    ).delete(synchronize_session=False)
+
+    db.query(QueryModel).filter(
+        QueryModel.task_id == task.id
+    ).delete(synchronize_session=False)
+
+    db.flush()
+
+    # ---- Recreate queries ----
+    for q in payload.queries:
+        db.add(
+            QueryModel(
+                task_id=task.id,
+                index=q.id,
+                name=getattr(q, 'name', '') or "",
+                split=q.split,
+                label=q.label or "",
+            )
+        )
+
+    db.commit()
+    db.refresh(task)
+
+    # ---- Generate presigned uploads (same as create) ----
+    uploads: list[QueryUploadResponse] = []
+
+    for q in payload.queries:
+        files: list[PresignedFileResponse] = []
+
+        for f in q.files:
+            object_key = f"{task.id}/{q.split}/input/{q.id}/{f.filename}"
+
+            post = storage.generate_presigned_upload_post(
+                object_key=object_key,
+                content_type=f.content_type,
+            )
+
+            files.append(
+                PresignedFileResponse(
+                    filename=f.filename,
+                    object_key=object_key,
+                    url=post["url"],
+                    fields=post["fields"],
+                )
+            )
+
+        uploads.append(
+            QueryUploadResponse(
+                query_index=q.id,
+                files=files,
+            )
+        )
+
+    return TaskCreateResponse(
+        task_id=str(task.id),
+        uploads=uploads,
+    )

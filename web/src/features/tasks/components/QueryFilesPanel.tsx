@@ -1,5 +1,6 @@
-import { Box, Stack, Divider, Button, Tooltip } from "@mui/material";
-import { useState } from "react";
+import { Box, Stack, Divider, Button, Tooltip, Typography, Paper, alpha } from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { useState, useCallback } from "react";
 import FileItem from "./FileItem";
 import FilePreview from "./FilePreview";
 
@@ -94,12 +95,49 @@ export default function QueryFilesPanel({
     });
   }
 
+  const [dragOver, setDragOver] = useState(false);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    if (!readOnly) setDragOver(true);
+  }, [readOnly]);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    if (!readOnly && e.dataTransfer.files.length > 0) {
+      addFiles(e.dataTransfer.files);
+    }
+  }, [readOnly, addFiles]);
+
   const selectedMeta = getFileMeta(selectedFile);
 
   return (
-    <Box display="flex" minHeight={260} border="1px solid" borderColor="divider">
+    <Paper
+      variant="outlined"
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      sx={{
+        display: "flex",
+        minHeight: 280,
+        borderColor: dragOver ? "primary.main" : "divider",
+        borderWidth: dragOver ? 2 : 1,
+        backgroundColor: dragOver ? (theme) => alpha(theme.palette.primary.main, 0.04) : undefined,
+        transition: "all 0.2s ease",
+      }}
+    >
       {/* ===== File list ===== */}
-      <Box width={280} p={1} overflow="auto">
+      <Box width={300} p={1.5} overflow="auto" bgcolor="background.paper">
+        <Typography variant="caption" color="text.secondary" fontWeight={500} sx={{ mb: 1, display: "block" }}>
+          Files ({query.files.length})
+        </Typography>
+
         <Stack spacing={0.5}>
           {query.files.map((f) => {
             const key = getFileKey(f);
@@ -109,6 +147,7 @@ export default function QueryFilesPanel({
               <Tooltip
                 key={key}
                 title={`${meta.type || "unknown"} · ${formatSize(meta.size)}`}
+                placement="right"
               >
                 <div>
                   <FileItem
@@ -125,8 +164,32 @@ export default function QueryFilesPanel({
             );
           })}
 
+          {query.files.length === 0 && !readOnly && (
+            <Box
+              sx={{
+                py: 3,
+                textAlign: "center",
+                color: "text.secondary",
+              }}
+            >
+              <CloudUploadIcon sx={{ fontSize: 32, opacity: 0.5, mb: 1 }} />
+              <Typography variant="body2">
+                Drop files here
+              </Typography>
+              <Typography variant="caption">
+                or click below to browse
+              </Typography>
+            </Box>
+          )}
+
           {!readOnly && (
-            <Button component="label" size="small">
+            <Button
+              component="label"
+              size="small"
+              variant="outlined"
+              startIcon={<CloudUploadIcon />}
+              sx={{ mt: 1 }}
+            >
               Add files
               <input
                 hidden
@@ -151,14 +214,20 @@ export default function QueryFilesPanel({
         alignItems="center"
         justifyContent="center"
         overflow="auto"
-        bgcolor="background.default"
+        bgcolor="grey.50"
       >
-        <FilePreview
-          file={selectedMeta.previewFile}
-          downloadUrl={selectedMeta.downloadUrl}
-          contentType={selectedMeta.type}
-        />
+        {selectedFile ? (
+          <FilePreview
+            file={selectedMeta.previewFile}
+            downloadUrl={selectedMeta.downloadUrl}
+            contentType={selectedMeta.type}
+          />
+        ) : (
+          <Typography variant="body2" color="text.secondary">
+            Select a file to preview
+          </Typography>
+        )}
       </Box>
-    </Box>
+    </Paper>
   );
 }

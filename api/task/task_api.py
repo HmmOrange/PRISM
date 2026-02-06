@@ -10,12 +10,14 @@ from db.schemas.task.task_schema import (
     TaskCreateResponse,
     TaskListResponse,
     TaskDetailResponse,
+    TaskUpdateRequest
 )
 from db.services.task.task_service import (
     create_task,
     list_tasks,
     get_task,
     delete_task,
+    update_task
 )
 from db.services.task.task_zip_service import create_task_from_zip
 from db.schemas.task.file_schema import CommitFilesRequest
@@ -94,3 +96,18 @@ def import_task_from_zip_api(
     db: Session = Depends(get_db),
 ):
     return create_task_from_zip(db, zip_file)
+
+@router.put(
+    "/{task_id}",
+    response_model=TaskCreateResponse,
+    summary="Update a task",
+)
+def update_task_api(
+    task_id: str,
+    payload: TaskUpdateRequest,
+    db: Session = Depends(get_db),
+):
+    try:
+        return update_task(db, task_id, payload)
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail="Task not found")

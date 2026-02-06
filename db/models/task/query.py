@@ -20,6 +20,7 @@ class QueryModel(Base):
         index=True,
     )
 
+    name = Column(String(256), nullable=False, default="")
     split = Column(String(32), nullable=False)  # "test" | "validation"
     label = Column(String, nullable=False, default="")
 

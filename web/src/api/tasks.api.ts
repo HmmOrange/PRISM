@@ -1,5 +1,5 @@
 import { apiFetch } from "./client";
-import type { TaskListItem, TaskDetail, CreateTaskPayload, CreateTaskResponse } from "../types/tasks.types";
+import type { TaskListItem, TaskDetail, CreateTaskPayload, CreateTaskResponse, UpdateTaskPayload } from "../types/tasks.types";
 
 /**
  * Create a task and receive presigned upload URLs.
@@ -72,3 +72,12 @@ export function commitTaskFiles(
   });
 }
 
+export async function updateTask(
+  taskId: string,
+  payload: UpdateTaskPayload
+): Promise<CreateTaskResponse> {
+  return apiFetch<CreateTaskResponse>(`/tasks/${taskId}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}

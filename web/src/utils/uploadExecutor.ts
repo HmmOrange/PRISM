@@ -1,5 +1,4 @@
-import type { CreateTaskResponse } from "../types/tasks.types";
-import type { QueryData } from "../features/tasks/types";
+import type { CreateTaskResponse, EditableQuery } from "../types/tasks.types";
 
 /**
  * Upload all files for a created task using presigned POST policies.
@@ -11,7 +10,7 @@ import type { QueryData } from "../features/tasks/types";
  */
 export async function uploadTaskFiles(
   result: CreateTaskResponse,
-  queries: QueryData[]
+  queries: EditableQuery[]
 ) {
   const committedFiles = [];
 

@@ -17,6 +17,7 @@ export interface CreateTaskPayload {
   description: string;
   queries: {
     id: number;
+    name: string;
     split: "test" | "validation";
     label: string;
     files: {
@@ -54,6 +55,7 @@ export interface QueryFile {
 
 export interface QueryDetail {
   index: number; // 0..N-1
+  name: string;
   split: "test" | "validation";
   label: string;
   files: QueryFile[];
@@ -78,4 +80,20 @@ export interface EditableQuery {
   split: "test" | "validation";
   label: string;
   files: LocalQueryFile[];
+}
+
+export interface UpdateTaskPayload {
+  name: string;
+  metric: string;
+  description: string;
+  queries: {
+    id: number;
+    name: string;
+    split: "test" | "validation";
+    label: string;
+    files: {
+      filename: string;
+      content_type: string;
+    }[];
+  }[];
 }

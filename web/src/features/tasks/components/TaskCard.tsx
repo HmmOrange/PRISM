@@ -7,6 +7,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Box,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useState } from "react";
@@ -17,10 +18,21 @@ import ConfirmDialog from "./ConfirmDialog";
 import { deleteTask } from "../../../api/tasks.api";
 import type { TaskListItem } from "../../../types/tasks.types";
 import { useToast } from "../../../components/feedback/ToastProvider";
+import { getMetricLabel } from "../../../config/metrics";
 
 interface Props {
   task: TaskListItem;
   onDeleted: (taskId: string) => void;
+}
+
+function formatDate(dateString?: string): string {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 export default function TaskCard({ task, onDeleted }: Props) {
@@ -85,7 +97,9 @@ export default function TaskCard({ task, onDeleted }: Props) {
 
         <CardContent>
           <Stack spacing={1.5}>
-            <Typography variant="h6">{task.name}</Typography>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <Typography variant="h6" sx={{ pr: 4 }}>{task.name}</Typography>
+            </Box>
 
             <Typography
               variant="body2"
@@ -95,21 +109,30 @@ export default function TaskCard({ task, onDeleted }: Props) {
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
+                minHeight: 40,
               }}
             >
-              {task.description}
+              {task.description || "No description"}
             </Typography>
 
-            <Chip
-              label={task.metric}
-              size="small"
-              sx={{ width: "fit-content" }}
-            />
+            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", alignItems: "center" }}>
+              <Chip
+                label={getMetricLabel(task.metric)}
+                size="small"
+                color="primary"
+                variant="outlined"
+              />
+              <TaskStats
+                test={task.test_queries}
+                validation={task.validation_queries}
+              />
+            </Box>
 
-            <TaskStats
-              test={task.test_queries}
-              validation={task.validation_queries}
-            />
+            {task.created_at && (
+              <Typography variant="caption" color="text.secondary">
+                Created {formatDate(task.created_at)}
+              </Typography>
+            )}
           </Stack>
         </CardContent>
       </Card>

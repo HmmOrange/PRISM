@@ -5,6 +5,8 @@ import {
   Stack,
   Typography,
   Chip,
+  Box,
+  Tooltip,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -32,9 +34,9 @@ export default function QueryAccordion({
   const queryIndex =
     "index" in query ? query.index : query.id;
 
-  const title = mode === "edit"
+  const displayName = mode === "edit"
                 ? (query as EditableQuery).name || `Query ${queryIndex + 1}`
-                : `Query ${queryIndex + 1}`;
+                : ("name" in query && query.name) || `Query ${queryIndex + 1}`;
 
   return (
     <Accordion>
@@ -46,7 +48,7 @@ export default function QueryAccordion({
           sx={{ width: "100%" }}
         >
           <Typography fontWeight={600}>
-            {title}
+            {displayName}
           </Typography>
 
           <Chip
@@ -55,12 +57,24 @@ export default function QueryAccordion({
             color={query.split === "test" ? "primary" : "secondary"}
           />
 
+          {query.label && (
+            <Tooltip title="Ground truth label">
+              <Chip
+                size="small"
+                label={query.label}
+                variant="outlined"
+                color="success"
+              />
+            </Tooltip>
+          )}
+
+          <Box sx={{ flexGrow: 1 }} />
+
           <Typography
             variant="caption"
             color="text.secondary"
-            sx={{ ml: "auto" }}
           >
-            {query.files.length} files
+            {query.files.length} file{query.files.length !== 1 ? "s" : ""}
           </Typography>
         </Stack>
       </AccordionSummary>
