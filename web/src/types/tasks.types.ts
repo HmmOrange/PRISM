@@ -1,20 +1,31 @@
+/**
+ * Task-related type definitions.
+ * Following TypeScript strict mode conventions from CODING_STANDARDS.md
+ */
+
 export interface TaskListItem {
   id: string;
   name: string;
   description: string;
   metric: string;
+  metrics?: string[]; // Support for multi-select metrics
 
   total_queries: number;
   test_queries: number;
   validation_queries: number;
 
+  pipeline_tags?: string[]; // Pipeline configuration tags
+
   created_at: string;
+  updated_at?: string;
 }
 
 export interface CreateTaskPayload {
   name: string;
   metric: string;
+  metrics?: string[]; // Multi-select metrics
   description: string;
+  pipeline_tags?: string[]; // Pipeline configuration tags
   queries: {
     id: number;
     name: string;
@@ -66,7 +77,11 @@ export interface TaskDetail {
   name: string;
   description: string;
   metric: string;
+  metrics?: string[]; // Multi-select metrics
+  pipeline_tags?: string[]; // Pipeline configuration tags
   queries: QueryDetail[];
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface LocalQueryFile {
@@ -85,7 +100,9 @@ export interface EditableQuery {
 export interface UpdateTaskPayload {
   name: string;
   metric: string;
+  metrics?: string[];
   description: string;
+  pipeline_tags?: string[];
   queries: {
     id: number;
     name: string;
