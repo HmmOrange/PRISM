@@ -5,18 +5,22 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# System deps
+# System deps (includes libs needed by opencv, audio, tesseract, etc.)
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
+    libgl1 \
+    libglib2.0-0 \
+    ffmpeg \
+    tesseract-ocr \
     && rm -rf /var/lib/apt/lists/*
 
-# Python deps – lean tasks-server extras only (no torch / ML stack)
+# Python deps – full ML stack
 COPY pyproject.toml LICENSE /app/
 RUN pip install --no-cache-dir --upgrade pip \
- && pip install --no-cache-dir .[tasks-server]
+ && pip install --no-cache-dir .[tasks]
 
-# App code – only what the tasks server actually imports
+# App code – everything
 COPY api /app/api
 COPY db /app/db
 COPY server /app/server
@@ -26,6 +30,13 @@ COPY configs /app/configs
 COPY docker/entrypoint.sh /app/docker/entrypoint.sh
 COPY alembic.ini /app/alembic.ini
 COPY alembic /app/alembic
+COPY scripts /app/scripts
+COPY results /app/results
+COPY tasks /app/tasks
+COPY templates /app/templates
+COPY prism /app/prism
+COPY pipeline /app/pipeline
+COPY data /app/data
 
 RUN chmod +x /app/docker/entrypoint.sh
 

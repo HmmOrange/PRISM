@@ -13,6 +13,8 @@ services:
       - ../db:/app/db
       - ../api:/app/api 
       - ../server:/app/server
+      - ../alembic:/app/alembic
+      - ../alembic.ini:/app/alembic.ini
     depends_on:
       - postgres
       - minio

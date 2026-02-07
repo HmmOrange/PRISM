@@ -233,7 +233,7 @@ export function useTaskWizard() {
       case 0:
         return state.name.trim() !== "" && state.metrics.length > 0;
       case 1:
-        return state.pipelineTags.length > 0;
+        return true; // Pipeline tags are optional
       case 2:
         return true; // Queries are optional
       case 3:

@@ -22,6 +22,9 @@ const colors = {
   error: "#EF4444",
   warning: "#F59E0B",
   info: "#3B82F6",
+  // Semantic colors for dataset types
+  validation: "#22C55E", // Green - same as success
+  test: "#3B82F6", // Blue - same as info
 };
 
 export const theme = createTheme({

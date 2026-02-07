@@ -131,8 +131,6 @@ function QueryCard({ query, index, onUpdate, onDelete, requireLabel }: QueryCard
     });
   }
 
-  const hasLabelError = requireLabel && !query.label.trim();
-
   return (
     <Paper
       variant="outlined"
@@ -214,7 +212,6 @@ function QueryCard({ query, index, onUpdate, onDelete, requireLabel }: QueryCard
                   : "Optional for test queries. Leave empty if unknown."
               }
               required={requireLabel}
-              error={hasLabelError ? "Label is required for validation queries" : undefined}
             >
               <TextField
                 value={query.label}
@@ -226,7 +223,6 @@ function QueryCard({ query, index, onUpdate, onDelete, requireLabel }: QueryCard
                 size="small"
                 multiline
                 minRows={2}
-                error={hasLabelError}
               />
             </FormField>
 

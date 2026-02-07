@@ -35,11 +35,11 @@ const variantStyles = {
     hoverBorder: designTokens.dark,
   },
   selected: {
-    backgroundColor: designTokens.accent,
+    backgroundColor: alpha(designTokens.accent, 0.12),
     borderColor: designTokens.accent,
-    color: "#FFFFFF",
-    hoverBg: "#E8863A",
-    hoverBorder: "#E8863A",
+    color: designTokens.dark,
+    hoverBg: alpha(designTokens.accent, 0.18),
+    hoverBorder: designTokens.accent,
   },
   category: {
     backgroundColor: alpha(designTokens.dark, 0.06),
@@ -49,18 +49,18 @@ const variantStyles = {
     hoverBorder: "transparent",
   },
   validation: {
-    backgroundColor: alpha(designTokens.success, 0.12),
-    borderColor: designTokens.success,
+    backgroundColor: alpha(designTokens.validation, 0.12),
+    borderColor: designTokens.validation,
     color: designTokens.dark,
-    hoverBg: alpha(designTokens.success, 0.18),
-    hoverBorder: designTokens.success,
+    hoverBg: alpha(designTokens.validation, 0.18),
+    hoverBorder: designTokens.validation,
   },
   test: {
-    backgroundColor: alpha(designTokens.info, 0.12),
-    borderColor: designTokens.info,
+    backgroundColor: alpha(designTokens.test, 0.12),
+    borderColor: designTokens.test,
     color: designTokens.dark,
-    hoverBg: alpha(designTokens.info, 0.18),
-    hoverBorder: designTokens.info,
+    hoverBg: alpha(designTokens.test, 0.18),
+    hoverBorder: designTokens.test,
   },
 };
 

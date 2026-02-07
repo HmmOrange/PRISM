@@ -159,14 +159,10 @@ export default function ReviewStep({
               Description
             </Typography>
             <Typography
-              variant="body2"
+              variant="body1"
               sx={{
                 whiteSpace: "pre-wrap",
-                bgcolor: "action.hover",
-                p: 2,
-                borderRadius: 1,
                 mt: 0.5,
-                minHeight: 100,
               }}
             >
               {description || <em>No description</em>}
@@ -183,7 +179,7 @@ export default function ReviewStep({
         <Box display="flex" flexWrap="wrap" gap={1}>
           {pipelineTags.length > 0 ? (
             pipelineTags.map((tag) => (
-              <Tag key={tag} label={tag} variant="category" size="small" />
+              <Tag key={tag} label={tag} variant="selected" size="small" />
             ))
           ) : (
             <Typography variant="body2" color="text.secondary">
@@ -199,8 +195,7 @@ export default function ReviewStep({
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
-            maxWidth: 400,
+            gap: 2,
             mb: 3,
           }}
         >

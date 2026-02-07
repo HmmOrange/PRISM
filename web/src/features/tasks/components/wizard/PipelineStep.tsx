@@ -32,11 +32,16 @@ export default function PipelineStep({
 }: PipelineStepProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Normalize string for search - remove dashes and convert to lowercase
+  function normalizeForSearch(str: string): string {
+    return str.toLowerCase().replace(/-/g, "");
+  }
+
   // Filter categories and tasks based on search
   const filteredCategories = TASK_CATEGORIES.map((category) => ({
     ...category,
     tasks: category.tasks.filter((task) =>
-      task.toLowerCase().includes(searchQuery.toLowerCase())
+      normalizeForSearch(task).includes(normalizeForSearch(searchQuery))
     ),
   })).filter((category) => category.tasks.length > 0);
 

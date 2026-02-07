@@ -168,10 +168,24 @@ export default function Navbar() {
                   color="inherit"
                   sx={{
                     fontWeight: isActive(item.path) ? 600 : 400,
-                    borderBottom: isActive(item.path) ? 2 : 0,
-                    borderColor: "primary.main",
                     borderRadius: 0,
-                    py: 1.5,
+                    py: 2,
+                    my: -2,
+                    px: 2,
+                    position: "relative",
+                    "&::after": isActive(item.path) ? {
+                      content: '""',
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: 3,
+                      bgcolor: "secondary.main",
+                    } : {},
+                    color: isActive(item.path) ? "secondary.main" : "inherit",
+                    "&:hover": {
+                      color: "secondary.main",
+                    },
                   }}
                 >
                   {item.label}

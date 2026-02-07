@@ -186,24 +186,33 @@ The application uses a cohesive color palette with the following design tokens:
 | Light | `#EAEFEF` | Backgrounds, surfaces, cards |
 | Muted | `#BFC9D1` | Borders, disabled states, secondary text |
 | Dark | `#25343F` | Primary text, headings, navigation |
-| Accent | `#FF9B51` | CTAs, highlights, selected states, links |
+| Accent (Orange) | `#FF9B51` | CTAs, highlights, selected states, links |
+| Validation (Green) | `#22C55E` | Validation dataset indicators |
+| Test (Blue) | `#3B82F6` | Test dataset indicators |
 
 **3.2.2. Component Library**
 
 * **Tag Component:** Universal tag styling used across metrics, pipeline tags, and dataset indicators.
   * Variants: `default`, `selected`, `category`, `validation`, `test`
+  * All variants use a consistent border + lighter background pattern
   * Supports click handlers and removable state
 
 * **FormField Component:** Standardized form field wrapper ensuring consistent layout:
   * Label positioned above input
   * Optional description text
-  * Required field indicator
-  * Error message display
+  * Required field indicator (\*)
+  * Error messages without inline red highlighting (uses top-level alerts instead)
 
 **3.2.3. Navigation**
 
 * **Logo:** Uses SVG logotype with color variant on hover state
+* **Active Tab Indicator:** Orange underline with `::after` pseudo-element, touching the bottom of the nav bar
+* **Active/Hover State:** Uses accent (orange) color for focused navigation items
 * **Profile Menu:** Dropdown with `disableScrollLock` to prevent layout shifts
+
+**3.2.4. Search Behavior**
+
+* **Pipeline Tags Search:** Normalizes search by removing dashes (`-`) from both the query and tag names to enable matching tags containing dashes (e.g., "text-to-image" matches "texttoimage" search)
 
 ### 3.3. Security
 

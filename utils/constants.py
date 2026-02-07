@@ -70,11 +70,11 @@ REPORTER_DEFAULT_URL = config.get("REPORTER_URL", "")
 
 
 HUGGINGFACE_HEADERS = {}
-if config["huggingface"]["token"] and config["huggingface"]["token"].startswith(
-    "hf_"
-):  # Check for valid huggingface token in config file
+_hf_cfg = config.get("huggingface", {}) or {}
+_hf_token = _hf_cfg.get("token", "")
+if _hf_token and _hf_token.startswith("hf_"):
     HUGGINGFACE_HEADERS = {
-        "Authorization": f"Bearer {config['huggingface']['token']}",
+        "Authorization": f"Bearer {_hf_token}",
     }
 elif (
     "HUGGINGFACE_ACCESS_TOKEN" in os.environ
@@ -85,8 +85,11 @@ elif (
         "Authorization": f"Bearer {os.getenv('HUGGINGFACE_ACCESS_TOKEN')}",
     }
 else:
-    raise ValueError(
-        f"Incorrect HuggingFace token. Please check your config.yaml or .env file."
+    import logging as _logging
+    _logging.getLogger(__name__).warning(
+        "No valid HuggingFace token found. "
+        "ML features requiring HuggingFace will not work. "
+        "Set the token in config.yaml or HUGGINGFACE_ACCESS_TOKEN env var."
     )
 
 PROXY = None

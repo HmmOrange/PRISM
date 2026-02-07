@@ -5,28 +5,12 @@
 # from typing import Optional
 # from huggingface_hub import HfApi
 # from huggingface_hub import ModelCard
+import logging
 from fastapi import APIRouter, Query, Form, UploadFile, File
-# from server.schema_base import DataResponse
-
-# import time
-# from server.settings import device, ROOT_PATH
-# from transformers import AutoTokenizer
-# from transformers.pipelines import pipeline
-# from PIL import Image
-# from ultralytics import YOLO
-# from server.custom_pipeline.tabular_pipeline import (
-#     TabularClassificationPipeline,
-#     TabularRegressionPipeline,
-# )
-# import soundfile as sf
-# from sentence_transformers import SentenceTransformer
-# from sklearn.metrics.pairwise import cosine_similarity
-# import numpy as np
 
 # New import for task APIs
 from api.task.task_api import router as task_router
 from api.storage.storage_api import router as storage_router
-from api.workflow.workflow_api import router as workflow_router
 from api.workflow.workflow_results_api import router as workflow_results_router
 
 # hf_api = HfApi()
@@ -40,11 +24,20 @@ from api.workflow.workflow_results_api import router as workflow_results_router
 
 router = APIRouter()
 
-# This will include all task related APIs
+# These routes are always available (lean deps only)
 router.include_router(task_router)
 router.include_router(storage_router)
-router.include_router(workflow_router)
 router.include_router(workflow_results_router)
+
+# Workflow generation requires the ML stack; skip gracefully when absent
+try:
+    from api.workflow.workflow_api import router as workflow_router
+    router.include_router(workflow_router)
+except ImportError:
+    logging.getLogger(__name__).warning(
+        "Workflow generation routes are unavailable (missing ML dependencies). "
+        "Install with: pip install .[ml]"
+    )
 
 # pipes = {}
 
