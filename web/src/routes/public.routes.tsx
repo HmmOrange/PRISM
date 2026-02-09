@@ -8,24 +8,10 @@ import type { RouteObject } from "react-router";
 import { Navigate } from "react-router-dom";
 import { ROUTES } from "../config/routes";
 
-// Layouts
-import MainLayout from "../components/layout/MainLayout";
-
 // Auth pages (with guest guard)
 import LoginPage from "../features/auth/pages/LoginPage";
 import RegisterPage from "../features/auth/pages/RegisterPage";
 import { GuestGuard } from "../features/auth";
-
-// Dashboard
-import { DashboardPage } from "../features/dashboard";
-
-// Task pages
-import TaskLibraryPage from "../features/tasks/pages/TaskLibraryPage";
-import CreateTaskWizardPage from "../features/tasks/pages/CreateTaskWizardPage";
-import TaskDetailPage from "../features/tasks/pages/TaskDetailPage";
-
-// Workflow pages
-import RunPage from "../features/workflows/pages/RunPage";
 
 export const publicRoutes: RouteObject[] = [
   // Auth routes (guest only)
@@ -46,41 +32,9 @@ export const publicRoutes: RouteObject[] = [
     ),
   },
 
-  // Main app routes
+  // Catch-all: redirect unknown routes to login
   {
-    element: <MainLayout />,
-    children: [
-      // Home redirects to dashboard
-      {
-        path: ROUTES.public.home,
-        element: <Navigate to={ROUTES.public.dashboard} replace />,
-      },
-      
-      // Dashboard
-      {
-        path: ROUTES.public.dashboard,
-        element: <DashboardPage />,
-      },
-
-      // Task routes
-      {
-        path: ROUTES.public.tasks,
-        element: <TaskLibraryPage />,
-      },
-      {
-        path: ROUTES.public.createTask,
-        element: <CreateTaskWizardPage />,
-      },
-      {
-        path: ROUTES.public.taskDetail,
-        element: <TaskDetailPage />,
-      },
-
-      // Workflow/Run routes
-      {
-        path: ROUTES.public.runTasks,
-        element: <RunPage />,
-      },
-    ],
+    path: "*",
+    element: <Navigate to={ROUTES.public.login} replace />,
   },
 ];

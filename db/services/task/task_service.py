@@ -23,6 +23,7 @@ from storage.storage_factory import get_storage
 def create_task(
     db: Session,
     payload: TaskCreateRequest,
+    user_id: str | None = None,
 ) -> TaskCreateResponse:
     storage = get_storage()
 
@@ -30,6 +31,7 @@ def create_task(
         name=payload.name,
         description=payload.description,
         metric=payload.metric,
+        user_id=user_id,
     )
     db.add(task)
     db.flush()
@@ -84,8 +86,8 @@ def create_task(
     )
 
 
-def list_tasks(db: Session) -> list[TaskListResponse]:
-    rows = (
+def list_tasks(db: Session, user_id: str | None = None) -> list[TaskListResponse]:
+    query = (
         db.query(
             TaskModel.id,
             TaskModel.name,
@@ -101,6 +103,13 @@ def list_tasks(db: Session) -> list[TaskListResponse]:
             ).label("validation_queries"),
         )
         .outerjoin(QueryModel, QueryModel.task_id == TaskModel.id)
+    )
+
+    if user_id is not None:
+        query = query.filter(TaskModel.user_id == user_id)
+
+    rows = (
+        query
         .group_by(TaskModel.id)
         .order_by(TaskModel.created_at.desc())
         .all()
@@ -121,8 +130,11 @@ def list_tasks(db: Session) -> list[TaskListResponse]:
     ]
 
 
-def get_task(db: Session, task_id: str) -> TaskDetailResponse:
-    task = db.query(TaskModel).filter(TaskModel.id == task_id).first()
+def get_task(db: Session, task_id: str, user_id: str | None = None) -> TaskDetailResponse:
+    query = db.query(TaskModel).filter(TaskModel.id == task_id)
+    if user_id is not None:
+        query = query.filter(TaskModel.user_id == user_id)
+    task = query.first()
     if not task:
         raise NoResultFound()
 
@@ -172,8 +184,11 @@ def get_task(db: Session, task_id: str) -> TaskDetailResponse:
         ],
     )
 
-def delete_task(db: Session, task_id: str) -> None:
-    task = db.query(TaskModel).filter(TaskModel.id == task_id).first()
+def delete_task(db: Session, task_id: str, user_id: str | None = None) -> None:
+    query = db.query(TaskModel).filter(TaskModel.id == task_id)
+    if user_id is not None:
+        query = query.filter(TaskModel.user_id == user_id)
+    task = query.first()
     if not task:
         raise NoResultFound()
 
@@ -202,6 +217,7 @@ def _create_task_and_queries(
     description: str,
     metric: str,
     queries: list[dict],
+    user_id: str | None = None,
 ):
     """
     Creates TaskModel and QueryModel rows.
@@ -213,6 +229,7 @@ def _create_task_and_queries(
         name=name,
         description=description,
         metric=metric,
+        user_id=user_id,
     )
     db.add(task)
     db.flush()  # assigns task.id
@@ -238,10 +255,14 @@ def update_task(
     db: Session,
     task_id: str,
     payload,
+    user_id: str | None = None,
 ) -> TaskCreateResponse:
     storage = get_storage()
 
-    task = db.query(TaskModel).filter(TaskModel.id == task_id).first()
+    query = db.query(TaskModel).filter(TaskModel.id == task_id)
+    if user_id is not None:
+        query = query.filter(TaskModel.user_id == user_id)
+    task = query.first()
     if not task:
         raise NoResultFound()
 

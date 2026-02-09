@@ -181,20 +181,20 @@ export default function DashboardPage() {
               icon={<AddIcon fontSize="large" />}
               title="Create New Task"
               description="Define a new ML task with dataset"
-              onClick={() => navigate(ROUTES.public.createTask)}
+              onClick={() => navigate(ROUTES.authed.createTask)}
               variant="contained"
             />
             <QuickAction
               icon={<PlayArrowIcon fontSize="large" />}
               title="Run Workflow"
               description="Execute tasks with a pipeline"
-              onClick={() => navigate(ROUTES.public.runTasks)}
+              onClick={() => navigate(ROUTES.authed.run)}
             />
             <QuickAction
               icon={<AssignmentIcon fontSize="large" />}
               title="View All Tasks"
               description="Browse and manage your tasks"
-              onClick={() => navigate(ROUTES.public.tasks)}
+              onClick={() => navigate(ROUTES.authed.tasks)}
             />
           </Stack>
         </Box>
@@ -208,7 +208,7 @@ export default function DashboardPage() {
             {recentTasks.length > 0 && (
               <Button
                 size="small"
-                onClick={() => navigate(ROUTES.public.tasks)}
+                onClick={() => navigate(ROUTES.authed.tasks)}
               >
                 View All
               </Button>
@@ -232,7 +232,7 @@ export default function DashboardPage() {
                 <Button
                   variant="contained"
                   startIcon={<AddIcon />}
-                  onClick={() => navigate(ROUTES.public.createTask)}
+                  onClick={() => navigate(ROUTES.authed.createTask)}
                 >
                   Create Task
                 </Button>

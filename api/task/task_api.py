@@ -22,6 +22,8 @@ from db.services.task.task_service import (
 from db.services.task.task_zip_service import create_task_from_zip
 from db.schemas.task.file_schema import CommitFilesRequest
 from db.services.task.file_service import commit_files
+from api.deps import get_current_user
+from db.models.user.user import UserModel
 
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
@@ -31,17 +33,21 @@ router = APIRouter(prefix="/tasks", tags=["Tasks"])
 def create_task_api(
     payload: TaskCreateRequest,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
-    return create_task(db, payload)
+    return create_task(db, payload, user_id=str(current_user.id))
 
 
 @router.get(
     "",
     response_model=List[TaskListResponse],
-    summary="List all tasks",
+    summary="List tasks for the current user",
 )
-def list_tasks_api(db: Session = Depends(get_db)):
-    return list_tasks(db)
+def list_tasks_api(
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
+):
+    return list_tasks(db, user_id=str(current_user.id))
 
 
 @router.get(
@@ -52,9 +58,10 @@ def list_tasks_api(db: Session = Depends(get_db)):
 def get_task_api(
     task_id: str,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     try:
-        return get_task(db, task_id)
+        return get_task(db, task_id, user_id=str(current_user.id))
     except NoResultFound:
         raise HTTPException(status_code=404, detail="Task not found")
 
@@ -67,9 +74,10 @@ def get_task_api(
 def delete_task_api(
     task_id: str,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     try:
-        delete_task(db, task_id)
+        delete_task(db, task_id, user_id=str(current_user.id))
     except NoResultFound:
         raise HTTPException(status_code=404, detail="Task not found")
 
@@ -82,9 +90,13 @@ def commit_files_api(
     task_id: str,
     payload: CommitFilesRequest,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
-    commit_files(db, task_id, payload)
-    return {"status": "ok"}
+    try:
+        commit_files(db, task_id, payload, user_id=str(current_user.id))
+        return {"status": "ok"}
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail="Task not found")
 
 @router.post(
     "/import/zip",
@@ -94,8 +106,9 @@ def commit_files_api(
 def import_task_from_zip_api(
     zip_file: UploadFile = File(...),
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
-    return create_task_from_zip(db, zip_file)
+    return create_task_from_zip(db, zip_file, user_id=str(current_user.id))
 
 @router.put(
     "/{task_id}",
@@ -106,8 +119,9 @@ def update_task_api(
     task_id: str,
     payload: TaskUpdateRequest,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     try:
-        return update_task(db, task_id, payload)
+        return update_task(db, task_id, payload, user_id=str(current_user.id))
     except NoResultFound:
         raise HTTPException(status_code=404, detail="Task not found")

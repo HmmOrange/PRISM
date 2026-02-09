@@ -1,16 +1,115 @@
 # PRISM
 
-```
+PRISM is a platform for ML engineering workflow management, featuring a web interface for task management and a CLI for running ML pipelines.
+
+## Quick Start (Docker)
+
+The fastest way to get started is using Docker Compose, which handles all dependencies and database setup automatically.
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) (v20.10+)
+- [Docker Compose](https://docs.docker.com/compose/install/) (v2.0+)
+
+### 1. Start All Services
+
+```bash
 cd docker
 docker compose up -d --build
-docker exec -it prism_tasks_server alembic upgrade head
 ```
 
-## Setup
+This will start:
+- **PostgreSQL** database on port `5432`
+- **MinIO** object storage on ports `9000` (API) and `9001` (console)
+- **Tasks Server** (FastAPI backend) on port `8000` — serves both `/tasks/*` and `/auth/*` endpoints
+- **Auth Init** (runs migrations, seeds admin, then exits)
+
+### 2. Wait for Initialization
+
+The services will automatically:
+1. Wait for PostgreSQL to be ready
+2. Run database migrations
+3. **Create the default admin user** (credentials below)
+
+Check the logs to verify everything started correctly:
+
+```bash
+docker logs prism_tasks_server
+docker logs prism_auth
+```
+
+### 3. Start the Frontend (Development)
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+The web app will be available at `http://localhost:5173`
+
+### 4. Login
+
+Default admin credentials:
+- **Username:** `admin`
+- **Password:** `admin@space`
+
+### Create/Reset Admin User
+
+The admin user is **automatically created during Docker startup** as part of the tasks-server entrypoint. You do not need to run any additional commands.
+
+If the admin already exists, the script will simply log "Admin exists" and continue.
+
+To manually verify or re-run the admin seed script:
+
+```bash
+# Via docker exec (recommended)
+docker exec prism_tasks_server python scripts-new/create-admin.py
+
+# Or via docker compose
+docker compose exec tasks-server python scripts-new/create-admin.py
+
+# For local development (database must be running)
+DB_HOST=localhost python scripts-new/create-admin.py
+```
+
+The script is idempotent - it will only create the admin if it doesn't exist.
+
+### API Endpoints
+
+The backend API is available at `http://localhost:8000`:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/auth/login` | POST | Login with username/password |
+| `/auth/register` | POST | Create new account |
+| `/auth/logout` | POST | Logout (client-side) |
+| `/auth/me` | GET | Get current user info |
+| `/tasks` | GET | List user's tasks |
+| `/tasks` | POST | Create new task |
+| `/tasks/{id}` | GET | Get task details |
+| `/tasks/{id}` | DELETE | Delete task |
+
+### Stopping Services
+
+```bash
+cd docker
+docker compose down
+```
+
+To also remove all data volumes:
+
+```bash
+docker compose down -v
+```
+
+---
+
+## Local Development Setup
+
+For development without Docker, or for running ML pipelines:
 
 ### Create and activate virtual environment
-
-Before installation, create and activate a virtual environment:
 
 **Windows:**
 ```console
@@ -31,6 +130,39 @@ After activating the virtual environment, you can install `prism` with pip:
 ```console
 pip install -e .
 ```
+
+For the web server (without ML dependencies):
+```console
+pip install -e ".[tasks-server]"
+```
+
+For ML pipelines:
+```console
+pip install -e ".[ml]"
+```
+
+### Database Configuration
+
+Copy and edit the config file:
+```bash
+cp configs/config.example.yaml configs/config.yaml
+```
+
+Update the database connection settings in `configs/config.yaml`.
+
+### Run Migrations
+
+```bash
+alembic upgrade head
+```
+
+### Start the Server
+
+```bash
+uvicorn server.tasks_server:app --host 0.0.0.0 --port 8000 --reload
+```
+
+---
 
 
 ## Dataset

@@ -11,6 +11,7 @@ from db.base import Base
 
 # Import model packages so all models register with Base.metadata
 import db.models.task  # noqa: F401
+import db.models.user  # noqa: F401
 
 # =========================
 # Path setup

@@ -12,6 +12,7 @@ from fastapi import APIRouter, Query, Form, UploadFile, File
 from api.task.task_api import router as task_router
 from api.storage.storage_api import router as storage_router
 from api.workflow.workflow_results_api import router as workflow_results_router
+from api.auth import router as auth_router
 
 # hf_api = HfApi()
 
@@ -25,6 +26,7 @@ from api.workflow.workflow_results_api import router as workflow_results_router
 router = APIRouter()
 
 # These routes are always available (lean deps only)
+router.include_router(auth_router)
 router.include_router(task_router)
 router.include_router(storage_router)
 router.include_router(workflow_results_router)

@@ -15,9 +15,26 @@ services:
       - ../server:/app/server
       - ../alembic:/app/alembic
       - ../alembic.ini:/app/alembic.ini
+      - ../scripts-new:/app/scripts-new
     depends_on:
       - postgres
       - minio
+
+  auth:
+    build:
+      context: ..
+      dockerfile: docker/dockerfile/Dockerfile.auth
+    container_name: prism_auth
+    volumes:
+      - ../configs:/app/configs
+      - ../db:/app/db
+      - ../api:/app/api
+      - ../server:/app/server
+      - ../scripts-new:/app/scripts-new
+      - ../alembic:/app/alembic
+      - ../alembic.ini:/app/alembic.ini
+    depends_on:
+      - postgres
 
   postgres:
     image: postgres:15

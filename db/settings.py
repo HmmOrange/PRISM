@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import yaml
 from pydantic import BaseModel
@@ -35,12 +36,13 @@ class DBSettings(BaseModel):
 
 # =========================
 # Public export
+# Environment variables override config.yaml values
 # =========================
 
 db_settings = DBSettings(
-    host=_config["db"]["host"],
-    port=_config["db"]["port"],
-    name=_config["db"]["name"],
-    user=_config["db"]["user"],
-    password=_config["db"]["password"],
+    host=os.environ.get("DB_HOST", _config["db"]["host"]),
+    port=int(os.environ.get("DB_PORT", _config["db"]["port"])),
+    name=os.environ.get("DB_NAME", _config["db"]["name"]),
+    user=os.environ.get("DB_USER", _config["db"]["user"]),
+    password=os.environ.get("DB_PASSWORD", _config["db"]["password"]),
 )

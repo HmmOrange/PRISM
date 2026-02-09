@@ -3,6 +3,8 @@
  * Implements SRS 2.1.2 Form Functionality:
  * - Email, username, password fields with client-side validation
  * - Password complexity validation
+ *
+ * Uses PRISM design-system palette and consistent FormField patterns.
  */
 
 import { useState } from "react";
@@ -16,6 +18,7 @@ import {
   Stack,
   Alert,
   CircularProgress,
+  Paper,
 } from "@mui/material";
 
 import type { RegisterCredentials, RegisterFormErrors } from "../types";
@@ -124,86 +127,155 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
   }
 
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate>
-      <Stack spacing={3}>
-        <Box>
-          <Typography variant="h4" fontWeight={600} gutterBottom>
-            Create account
+    <Paper
+      elevation={0}
+      sx={{
+        p: { xs: 3, sm: 4 },
+        borderRadius: 3,
+        border: "1px solid",
+        borderColor: "#BFC9D1",
+        bgcolor: "#FFFFFF",
+      }}
+    >
+      <Box component="form" onSubmit={handleSubmit} noValidate>
+        <Stack spacing={3}>
+          <Box>
+            <Typography
+              variant="h4"
+              fontWeight={700}
+              sx={{ color: "#25343F", mb: 0.5 }}
+            >
+              Create account
+            </Typography>
+            <Typography sx={{ color: "#25343F", opacity: 0.6 }}>
+              Get started with PRISM
+            </Typography>
+          </Box>
+
+          {errors.general && (
+            <Alert severity="error">{errors.general}</Alert>
+          )}
+
+          {/* Username */}
+          <Box>
+            <Typography
+              variant="body2"
+              fontWeight={500}
+              sx={{ mb: 0.75, color: "#25343F" }}
+            >
+              Username <span style={{ color: "#FF9B51" }}>*</span>
+            </Typography>
+            <TextField
+              placeholder="Choose a username"
+              value={credentials.username}
+              onChange={(e) => handleChange("username", e.target.value)}
+              error={!!errors.username}
+              helperText={errors.username}
+              fullWidth
+              autoComplete="username"
+              autoFocus
+            />
+          </Box>
+
+          {/* Email */}
+          <Box>
+            <Typography
+              variant="body2"
+              fontWeight={500}
+              sx={{ mb: 0.75, color: "#25343F" }}
+            >
+              Email <span style={{ color: "#FF9B51" }}>*</span>
+            </Typography>
+            <TextField
+              placeholder="you@example.com"
+              type="email"
+              value={credentials.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+              error={!!errors.email}
+              helperText={errors.email}
+              fullWidth
+              autoComplete="email"
+            />
+          </Box>
+
+          {/* Password */}
+          <Box>
+            <Typography
+              variant="body2"
+              fontWeight={500}
+              sx={{ mb: 0.75, color: "#25343F" }}
+            >
+              Password <span style={{ color: "#FF9B51" }}>*</span>
+            </Typography>
+            <TextField
+              placeholder="Create a strong password"
+              type="password"
+              value={credentials.password}
+              onChange={(e) => handleChange("password", e.target.value)}
+              error={!!errors.password}
+              helperText={
+                errors.password ||
+                "8+ characters, uppercase, lowercase, number"
+              }
+              fullWidth
+              autoComplete="new-password"
+            />
+          </Box>
+
+          {/* Confirm Password */}
+          <Box>
+            <Typography
+              variant="body2"
+              fontWeight={500}
+              sx={{ mb: 0.75, color: "#25343F" }}
+            >
+              Confirm Password <span style={{ color: "#FF9B51" }}>*</span>
+            </Typography>
+            <TextField
+              placeholder="Re-enter your password"
+              type="password"
+              value={credentials.confirmPassword}
+              onChange={(e) => handleChange("confirmPassword", e.target.value)}
+              error={!!errors.confirmPassword}
+              helperText={errors.confirmPassword}
+              fullWidth
+              autoComplete="new-password"
+            />
+          </Box>
+
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            fullWidth
+            disabled={isSubmitting}
+            sx={{
+              bgcolor: "#FF9B51",
+              color: "#FFFFFF",
+              fontWeight: 600,
+              py: 1.4,
+              "&:hover": { bgcolor: "#E8863A" },
+            }}
+          >
+            {isSubmitting ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Create Account"
+            )}
+          </Button>
+
+          <Typography variant="body2" align="center" sx={{ color: "#25343F", opacity: 0.6 }}>
+            Already have an account?{" "}
+            <Link
+              component={RouterLink}
+              to={ROUTES.public.login}
+              sx={{ color: "#FF9B51", fontWeight: 600, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
+            >
+              Sign in
+            </Link>
           </Typography>
-          <Typography color="text.secondary">
-            Get started with PRISM
-          </Typography>
-        </Box>
-
-        {errors.general && (
-          <Alert severity="error">{errors.general}</Alert>
-        )}
-
-        <TextField
-          label="Username"
-          value={credentials.username}
-          onChange={(e) => handleChange("username", e.target.value)}
-          error={!!errors.username}
-          helperText={errors.username}
-          fullWidth
-          required
-          autoComplete="username"
-          autoFocus
-        />
-
-        <TextField
-          label="Email"
-          type="email"
-          value={credentials.email}
-          onChange={(e) => handleChange("email", e.target.value)}
-          error={!!errors.email}
-          helperText={errors.email}
-          fullWidth
-          required
-          autoComplete="email"
-        />
-
-        <TextField
-          label="Password"
-          type="password"
-          value={credentials.password}
-          onChange={(e) => handleChange("password", e.target.value)}
-          error={!!errors.password}
-          helperText={errors.password || "8+ characters, uppercase, lowercase, number"}
-          fullWidth
-          required
-          autoComplete="new-password"
-        />
-
-        <TextField
-          label="Confirm Password"
-          type="password"
-          value={credentials.confirmPassword}
-          onChange={(e) => handleChange("confirmPassword", e.target.value)}
-          error={!!errors.confirmPassword}
-          helperText={errors.confirmPassword}
-          fullWidth
-          required
-          autoComplete="new-password"
-        />
-
-        <Button
-          type="submit"
-          variant="contained"
-          size="large"
-          fullWidth
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? <CircularProgress size={24} /> : "Create Account"}
-        </Button>
-
-        <Typography variant="body2" align="center">
-          Already have an account?{" "}
-          <Link component={RouterLink} to={ROUTES.public.login}>
-            Sign in
-          </Link>
-        </Typography>
-      </Stack>
-    </Box>
+        </Stack>
+      </Box>
+    </Paper>
   );
 }

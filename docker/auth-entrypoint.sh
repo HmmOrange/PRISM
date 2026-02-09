@@ -20,8 +20,4 @@ alembic upgrade head
 echo "Creating default admin account..."
 python scripts-new/create-admin.py
 
-echo "Starting PRISM Tasks Server..."
-exec uvicorn server.tasks_server:app \
-  --host 0.0.0.0 \
-  --port 8000 \
-  --reload
+echo "Auth initialization complete."

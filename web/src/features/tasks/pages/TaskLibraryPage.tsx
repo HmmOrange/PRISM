@@ -186,7 +186,7 @@ export default function TaskLibraryPage() {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => navigate(ROUTES.public.createTask)}
+          onClick={() => navigate(ROUTES.authed.createTask)}
         >
           New Task
         </Button>
@@ -422,7 +422,7 @@ export default function TaskLibraryPage() {
                 <Button
                   variant="contained"
                   startIcon={<AddIcon />}
-                  onClick={() => navigate(ROUTES.public.createTask)}
+                  onClick={() => navigate(ROUTES.authed.createTask)}
                 >
                   Create Task
                 </Button>

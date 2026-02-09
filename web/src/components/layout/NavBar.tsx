@@ -26,6 +26,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Typography,
 } from "@mui/material";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -36,6 +37,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 import { ROUTES } from "../../config/routes";
+import { useAuth } from "../../features/auth";
 
 interface NavItem {
   label: string;
@@ -44,10 +46,9 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard", path: ROUTES.public.dashboard, icon: <DashboardIcon /> },
-  { label: "Tasks", path: ROUTES.public.tasks, icon: <AssignmentIcon /> },
-  { label: "Run", path: ROUTES.public.runTasks, icon: <PlayArrowIcon /> },
-  // { label: "Projects", path: ROUTES.public.projects, icon: <FolderIcon /> },
+  { label: "Dashboard", path: ROUTES.authed.dashboard, icon: <DashboardIcon /> },
+  { label: "Tasks", path: ROUTES.authed.tasks, icon: <AssignmentIcon /> },
+  { label: "Run", path: ROUTES.authed.run, icon: <PlayArrowIcon /> },
 ];
 
 export default function Navbar() {
@@ -55,12 +56,13 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const { user, logout } = useAuth();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   function isActive(path: string): boolean {
-    if (path === ROUTES.public.dashboard) {
+    if (path === ROUTES.authed.dashboard) {
       return location.pathname === path || location.pathname === "/";
     }
     return location.pathname.startsWith(path);
@@ -74,9 +76,9 @@ export default function Navbar() {
     setAnchorEl(null);
   }
 
-  function handleLogout() {
+  async function handleLogout() {
     handleProfileClose();
-    // Logout will be handled by auth context when implemented
+    await logout();
     navigate(ROUTES.public.login);
   }
 
@@ -103,7 +105,7 @@ export default function Navbar() {
       <Divider />
       <List>
         <ListItem disablePadding>
-          <ListItemButton component={RouterLink} to={ROUTES.public.createTask}>
+          <ListItemButton component={RouterLink} to={ROUTES.authed.createTask}>
             <ListItemText primary="Create Task" />
           </ListItemButton>
         </ListItem>
@@ -129,7 +131,7 @@ export default function Navbar() {
           {/* Logo */}
           <Box
             component={RouterLink}
-            to={ROUTES.public.home}
+            to="/"
             sx={{
               display: "flex",
               alignItems: "center",
@@ -199,7 +201,7 @@ export default function Navbar() {
             {!isMobile && (
               <Button
                 component={RouterLink}
-                to={ROUTES.public.createTask}
+                to={ROUTES.authed.createTask}
                 variant="contained"
               >
                 Create Task
@@ -218,27 +220,17 @@ export default function Navbar() {
               transformOrigin={{ vertical: "top", horizontal: "right" }}
               disableScrollLock
             >
-              <MenuItem
-                component={RouterLink}
-                to={ROUTES.public.login}
-                onClick={handleProfileClose}
-              >
-                <ListItemIcon>
-                  <PersonIcon fontSize="small" />
-                </ListItemIcon>
-                Login
-              </MenuItem>
-              <MenuItem
-                component={RouterLink}
-                to={ROUTES.public.register}
-                onClick={handleProfileClose}
-              >
-                <ListItemIcon>
-                  <PersonIcon fontSize="small" />
-                </ListItemIcon>
-                Register
-              </MenuItem>
-              <Divider />
+              {user && (
+                <Box sx={{ px: 2, py: 1 }}>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    {user.username}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {user.email}
+                  </Typography>
+                </Box>
+              )}
+              {user && <Divider />}
               <MenuItem onClick={handleLogout}>
                 <ListItemIcon>
                   <LogoutIcon fontSize="small" />

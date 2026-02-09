@@ -1,8 +1,10 @@
 /**
  * Auth Layout component.
  * Implements SRS 2.1.2 Split Layout Design:
- * - Visual Panel: Brand logo and marketing copy
+ * - Visual Panel: Brand logo (logotype-colored.svg) and marketing copy
  * - Interaction Panel: Centered form area
+ *
+ * Uses the PRISM design-system palette (#25343F, #FF9B51, #EAEFEF, #BFC9D1).
  */
 
 import { Box, Container, Typography, useTheme, useMediaQuery } from "@mui/material";
@@ -22,93 +24,117 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
       minHeight="100vh"
       flexDirection={isMobile ? "column" : "row"}
     >
-      {/* Visual Panel - Brand Section */}
+      {/* Visual Panel — Brand Section */}
       <Box
         sx={{
           flex: isMobile ? "none" : 1,
-          minHeight: isMobile ? 200 : "100vh",
-          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          minHeight: isMobile ? 220 : "100vh",
+          bgcolor: "#25343F",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          color: "white",
-          p: 4,
+          p: { xs: 4, md: 6 },
           position: "relative",
           overflow: "hidden",
         }}
       >
-        {/* Background pattern */}
+        {/* Subtle dot pattern background */}
         <Box
           sx={{
             position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            opacity: 0.1,
-            backgroundImage: `radial-gradient(circle at 25% 25%, white 2%, transparent 2%),
-                            radial-gradient(circle at 75% 75%, white 2%, transparent 2%)`,
-            backgroundSize: "60px 60px",
+            inset: 0,
+            opacity: 0.04,
+            backgroundImage:
+              "radial-gradient(circle, #EAEFEF 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
           }}
         />
 
-        <Box sx={{ position: "relative", zIndex: 1, textAlign: "center" }}>
-          <Typography
-            variant="h2"
-            fontWeight={700}
-            sx={{ mb: 2 }}
-          >
-            PRISM
-          </Typography>
-          <Typography
-            variant="h5"
-            sx={{ mb: 3, opacity: 0.9 }}
-          >
-            Model-Based Workflow Generation
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{ maxWidth: 400, opacity: 0.8, lineHeight: 1.6 }}
-          >
-            Create complex task workflows utilizing optimal models
-            for your machine learning and AI projects.
-          </Typography>
-        </Box>
-
-        {/* Decorative elements */}
+        {/* Decorative accent circle */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: -80,
+            right: -80,
+            width: 260,
+            height: 260,
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle, rgba(255,155,81,0.18) 0%, transparent 70%)",
+          }}
+        />
         <Box
           sx={{
             position: "absolute",
             bottom: -100,
-            right: -100,
+            left: -60,
             width: 300,
             height: 300,
             borderRadius: "50%",
-            background: "rgba(255,255,255,0.1)",
+            background:
+              "radial-gradient(circle, rgba(255,155,81,0.10) 0%, transparent 70%)",
           }}
         />
+
+        {/* Content */}
         <Box
           sx={{
-            position: "absolute",
-            top: -50,
-            left: -50,
-            width: 200,
-            height: 200,
-            borderRadius: "50%",
-            background: "rgba(255,255,255,0.05)",
+            position: "relative",
+            zIndex: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
+            maxWidth: 420,
           }}
-        />
+        >
+          {/* Logo SVG */}
+          <Box
+            component="img"
+            src="/logotype-white-colored.svg"
+            alt="PRISM"
+            sx={{
+              width: { xs: 180, md: 260 },
+              mb: 4,
+              filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.3))",
+            }}
+          />
+
+          <Typography
+            variant="h5"
+            sx={{
+              color: "#EAEFEF",
+              fontWeight: 500,
+              mb: 2,
+              letterSpacing: "0.02em",
+            }}
+          >
+            Model-Based Workflow Generation
+          </Typography>
+
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#BFC9D1",
+              lineHeight: 1.7,
+              maxWidth: 360,
+            }}
+          >
+            Create complex task workflows utilizing optimal models for your
+            machine learning and AI projects.
+          </Typography>
+        </Box>
       </Box>
 
-      {/* Interaction Panel - Form Section */}
+      {/* Interaction Panel — Form Section */}
       <Box
         sx={{
           flex: 1,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          bgcolor: "background.default",
+          bgcolor: "#EAEFEF",
           p: { xs: 3, md: 6 },
         }}
       >

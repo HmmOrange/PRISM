@@ -3,6 +3,8 @@
  * Implements SRS 2.1.2 Form Functionality:
  * - Email/username and password fields with validation
  * - Remember Me checkbox for persistent sessions
+ *
+ * Uses PRISM design-system palette and consistent FormField patterns.
  */
 
 import { useState } from "react";
@@ -18,6 +20,7 @@ import {
   Stack,
   Alert,
   CircularProgress,
+  Paper,
 } from "@mui/material";
 
 import type { LoginCredentials, LoginFormErrors } from "../types";
@@ -90,74 +93,125 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
   }
 
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate>
-      <Stack spacing={3}>
-        <Box>
-          <Typography variant="h4" fontWeight={600} gutterBottom>
-            Welcome back
-          </Typography>
-          <Typography color="text.secondary">
-            Sign in to your PRISM account
-          </Typography>
-        </Box>
+    <Paper
+      elevation={0}
+      sx={{
+        p: { xs: 3, sm: 4 },
+        borderRadius: 3,
+        border: "1px solid",
+        borderColor: "#BFC9D1",
+        bgcolor: "#FFFFFF",
+      }}
+    >
+      <Box component="form" onSubmit={handleSubmit} noValidate>
+        <Stack spacing={3}>
+          <Box>
+            <Typography
+              variant="h4"
+              fontWeight={700}
+              sx={{ color: "#25343F", mb: 0.5 }}
+            >
+              Welcome back
+            </Typography>
+            <Typography sx={{ color: "#25343F", opacity: 0.6 }}>
+              Sign in to your PRISM account
+            </Typography>
+          </Box>
 
-        {errors.general && (
-          <Alert severity="error">{errors.general}</Alert>
-        )}
+          {errors.general && (
+            <Alert severity="error">{errors.general}</Alert>
+          )}
 
-        <TextField
-          label="Username"
-          type="text"
-          value={credentials.username}
-          onChange={(e) => handleChange("username", e.target.value)}
-          error={!!errors.username}
-          helperText={errors.username}
-          fullWidth
-          required
-          autoComplete="username"
-          autoFocus
-        />
-
-        <TextField
-          label="Password"
-          type="password"
-          value={credentials.password}
-          onChange={(e) => handleChange("password", e.target.value)}
-          error={!!errors.password}
-          helperText={errors.password}
-          fullWidth
-          required
-          autoComplete="current-password"
-        />
-
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={credentials.rememberMe}
-              onChange={(e) => handleChange("rememberMe", e.target.checked)}
-              color="primary"
+          {/* Username */}
+          <Box>
+            <Typography
+              variant="body2"
+              fontWeight={500}
+              sx={{ mb: 0.75, color: "#25343F" }}
+            >
+              Username <span style={{ color: "#FF9B51" }}>*</span>
+            </Typography>
+            <TextField
+              placeholder="Enter your username"
+              type="text"
+              value={credentials.username}
+              onChange={(e) => handleChange("username", e.target.value)}
+              error={!!errors.username}
+              helperText={errors.username}
+              fullWidth
+              autoComplete="username"
+              autoFocus
             />
-          }
-          label="Remember me"
-        />
+          </Box>
 
-        <Button
-          type="submit"
-          variant="contained"
-          size="large"
-          fullWidth
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? <CircularProgress size={24} /> : "Sign In"}
-        </Button>
+          {/* Password */}
+          <Box>
+            <Typography
+              variant="body2"
+              fontWeight={500}
+              sx={{ mb: 0.75, color: "#25343F" }}
+            >
+              Password <span style={{ color: "#FF9B51" }}>*</span>
+            </Typography>
+            <TextField
+              placeholder="Enter your password"
+              type="password"
+              value={credentials.password}
+              onChange={(e) => handleChange("password", e.target.value)}
+              error={!!errors.password}
+              helperText={errors.password}
+              fullWidth
+              autoComplete="current-password"
+            />
+          </Box>
 
-        <Typography variant="body2" align="center">
-          Don't have an account?{" "}
-          <Link component={RouterLink} to={ROUTES.public.register}>
-            Sign up
-          </Link>
-        </Typography>
-      </Stack>
-    </Box>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={credentials.rememberMe}
+                onChange={(e) => handleChange("rememberMe", e.target.checked)}
+                sx={{
+                  color: "#BFC9D1",
+                  "&.Mui-checked": { color: "#FF9B51" },
+                }}
+              />
+            }
+            label={
+              <Typography variant="body2" sx={{ color: "#25343F" }}>
+                Remember me
+              </Typography>
+            }
+          />
+
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            fullWidth
+            disabled={isSubmitting}
+            sx={{
+              bgcolor: "#FF9B51",
+              color: "#FFFFFF",
+              fontWeight: 600,
+              py: 1.4,
+              "&:hover": { bgcolor: "#E8863A" },
+            }}
+          >
+            {isSubmitting ? <CircularProgress size={24} color="inherit" /> : "Sign In"}
+          </Button>
+
+          <Typography variant="body2" align="center" sx={{ color: "#25343F", opacity: 0.6 }}>
+            Don't have an account?{" "}
+            <Link
+              component={RouterLink}
+              to={ROUTES.public.register}
+              sx={{ color: "#FF9B51", fontWeight: 600, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
+            >
+              Sign up
+            </Link>
+          </Typography>
+        </Stack>
+      </Box>
+    </Paper>
   );
 }

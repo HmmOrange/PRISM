@@ -5,30 +5,31 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# System deps
+# System deps (libpq for psycopg2)
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
     netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
-# Python deps – lean tasks-server extras only (no torch / ML stack)
+# Python deps — lean tasks-server extras (includes bcrypt + python-jose)
 COPY pyproject.toml LICENSE /app/
 RUN pip install --no-cache-dir --upgrade pip \
  && pip install --no-cache-dir .[tasks-server]
 
-# App code – only what the tasks server actually imports
+# App code — only what the auth actions need
 COPY api /app/api
 COPY db /app/db
 COPY server /app/server
 COPY storage /app/storage
 COPY utils /app/utils
 COPY configs /app/configs
-COPY docker/entrypoint.sh /app/docker/entrypoint.sh
+COPY scripts-new /app/scripts-new
 COPY alembic.ini /app/alembic.ini
 COPY alembic /app/alembic
 
-RUN chmod +x /app/docker/entrypoint.sh
+# Create an entrypoint script
+COPY docker/auth-entrypoint.sh /app/docker/auth-entrypoint.sh
+RUN chmod +x /app/docker/auth-entrypoint.sh
 
-# Entrypoint
-ENTRYPOINT ["sh", "/app/docker/entrypoint.sh"]
+CMD ["/bin/sh", "/app/docker/auth-entrypoint.sh"]

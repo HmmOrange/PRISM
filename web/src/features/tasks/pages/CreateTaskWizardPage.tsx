@@ -121,7 +121,7 @@ export default function CreateTaskWizardPage() {
    */
   function handleGenerateWorkflow() {
     // Navigate to run page with task pre-selected
-    navigate(ROUTES.public.runTasks, {
+    navigate(ROUTES.authed.run, {
       state: { selectedTaskId: successDialog.taskId },
     });
   }

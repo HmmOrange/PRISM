@@ -31,9 +31,9 @@ export default function GuestGuard({ children }: GuestGuardProps) {
     );
   }
 
-  // Redirect to home if already authenticated
+  // Redirect to dashboard if already authenticated
   if (isAuthenticated) {
-    const from = (location.state as { from?: Location })?.from?.pathname || ROUTES.public.home;
+    const from = (location.state as { from?: Location })?.from?.pathname || ROUTES.authed.dashboard;
     return <Navigate to={from} replace />;
   }
 

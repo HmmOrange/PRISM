@@ -1,8 +1,21 @@
 import { API_CONFIG } from "../config/api";
 
+const AUTH_TOKEN_KEY = "prism_auth_token";
+
+/**
+ * Retrieve stored auth token (localStorage or sessionStorage).
+ */
+function getAuthToken(): string | null {
+  return (
+    localStorage.getItem(AUTH_TOKEN_KEY) ??
+    sessionStorage.getItem(AUTH_TOKEN_KEY)
+  );
+}
+
 /**
  * JSON API client
  * - Automatically sets JSON headers
+ * - Attaches Bearer token when available
  * - Parses JSON responses
  * - Throws meaningful errors
  */
@@ -19,6 +32,12 @@ export async function apiFetch<T>(
   // Only set JSON header when body is NOT FormData
   if (!(options.body instanceof FormData)) {
     headers["Content-Type"] = "application/json";
+  }
+
+  // Attach auth token if available
+  const token = getAuthToken();
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const res = await fetch(`${API_CONFIG.baseUrl}${path}`, {

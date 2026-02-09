@@ -7,7 +7,7 @@
 
 ## 1. System Overview
 
-The objective is to refactor the existing minimal web interface into a robust, production-ready platform. The system facilitates the creation of complex task workflows that utilize optimal models rather than relying solely on generic LLMs. The refactor focuses on modularity, security, and an enhanced User Experience (UX) centered around a "Task" and "Project" architecture.
+The objective is to refactor the existing minimal CLI interface into a robust, production-ready platform. The system facilitates the creation of complex task workflows that utilize optimal models rather than relying solely on generic LLMs. The refactor focuses on modularity, security, and an enhanced User Experience (UX) centered around a "Task" and "Project" architecture.
 
 ---
 

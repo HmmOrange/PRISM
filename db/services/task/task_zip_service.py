@@ -26,6 +26,7 @@ REQUIRED_SPLITS = {"test", "validation"}
 def create_task_from_zip(
     db: Session,
     zip_file: UploadFile,
+    user_id: str | None = None,
 ):
     if not zip_file.filename.lower().endswith(".zip"):
         raise HTTPException(status_code=400, detail="File must be a .zip")
@@ -49,6 +50,7 @@ def create_task_from_zip(
             description=description,
             metric=metric,
             queries=queries,
+            user_id=user_id,
         )
 
         query_id_map = {

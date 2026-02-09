@@ -15,7 +15,7 @@ export default function RegisterPage() {
 
   async function handleRegister(credentials: RegisterCredentials) {
     await register(credentials);
-    navigate(ROUTES.public.home, { replace: true });
+    navigate(ROUTES.authed.dashboard, { replace: true });
   }
 
   return (
