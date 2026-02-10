@@ -1,6 +1,6 @@
 import uuid
 from sqlalchemy import Column, String, Text, DateTime, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
@@ -19,6 +19,7 @@ class TaskModel(Base):
     name = Column(String(255), nullable=False)
     description = Column(Text, nullable=False)
     metric = Column(String(128), nullable=False)
+    pipeline_tags = Column(ARRAY(String), nullable=True, default=[])
 
     user_id = Column(
         UUID(as_uuid=True),
@@ -30,6 +31,13 @@ class TaskModel(Base):
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now(),
+        nullable=False,
+    )
+
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
         nullable=False,
     )
 

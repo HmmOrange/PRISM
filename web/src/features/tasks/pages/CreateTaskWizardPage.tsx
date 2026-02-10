@@ -127,7 +127,7 @@ export default function CreateTaskWizardPage() {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 6 }}>
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" fontWeight={600} gutterBottom>
         Create New Task
       </Typography>

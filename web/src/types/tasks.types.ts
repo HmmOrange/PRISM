@@ -89,12 +89,22 @@ export interface LocalQueryFile {
   file: File;
 }
 
+export interface ExistingQueryFile {
+  id: string;
+  filename: string;
+  size: number;
+  download_url: string;
+  content_type: string;
+  object_key: string;  // Needed for preservation on update
+}
+
 export interface EditableQuery {
   id: number; // 0..N-1
   name: string;
   split: "test" | "validation";
   label: string;
   files: LocalQueryFile[];
+  existingFiles?: ExistingQueryFile[]; // Files already on the server
 }
 
 export interface UpdateTaskPayload {
@@ -112,5 +122,6 @@ export interface UpdateTaskPayload {
       filename: string;
       content_type: string;
     }[];
+    existing_files: string[];  // object_keys to preserve
   }[];
 }

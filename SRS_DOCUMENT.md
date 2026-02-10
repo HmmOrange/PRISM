@@ -2,8 +2,11 @@
 # Software Requirements Specification (SRS)
 
 **Project:** Model-Based Workflow Generation System (Refactor)
-**Version:** 2.0.0
-**Status:** Draft
+**Version:** 2.1.0
+**Status:** Implemented
+**Last Updated:** February 2026
+
+> **See Also:** [PORTING_GUIDE.md](PORTING_GUIDE.md) for comprehensive backend/frontend reconstruction reference.
 
 ## 1. System Overview
 
@@ -241,3 +244,233 @@ The requested script (`create_admin.py` or similar) should perform the following
 2. If yes, log "Admin exists" and exit.
 3. If no, hash the string "admin" using the production hashing configuration.
 4. Insert the record into the `users` table.
+---
+
+## 5. Implementation Status
+
+### 5.1. Technology Stack (Implemented)
+
+| Component | Technology | Version |
+|-----------|------------|---------|
+| Backend Framework | FastAPI | Latest |
+| Database | PostgreSQL | 15 |
+| ORM | SQLAlchemy | 2.x |
+| Migrations | Alembic | Latest |
+| Object Storage | MinIO | S3-compatible |
+| Password Hashing | bcrypt | 12 rounds |
+| JWT Library | python-jose | Latest |
+| Frontend Framework | React | 19.2.0 |
+| UI Library | MUI (Material UI) | 7.3.7 |
+| Routing | React Router DOM | 7.13.0 |
+| Build Tool | Vite | 7.2.4 |
+| Language | TypeScript | 5.9.3 |
+
+### 5.2. Database Schema (Implemented)
+
+#### Users Table
+```sql
+CREATE TABLE users (
+    id UUID PRIMARY KEY,
+    username VARCHAR(150) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    hashed_password VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIMEZONE
+);
+```
+
+#### Tasks Table
+```sql
+CREATE TABLE tasks (
+    id UUID PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    metric VARCHAR(128) NOT NULL,
+    pipeline_tags TEXT[],
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIMEZONE,
+    updated_at TIMESTAMP WITH TIMEZONE
+);
+```
+
+#### Queries Table
+```sql
+CREATE TABLE queries (
+    id SERIAL PRIMARY KEY,
+    index INTEGER NOT NULL,
+    task_id UUID REFERENCES tasks(id) ON DELETE CASCADE,
+    name VARCHAR(256) DEFAULT '',
+    split VARCHAR(32) NOT NULL,  -- 'test' | 'validation'
+    label VARCHAR DEFAULT ''
+);
+```
+
+#### Query Files Table
+```sql
+CREATE TABLE query_files (
+    id UUID PRIMARY KEY,
+    query_id INTEGER REFERENCES queries(id) ON DELETE CASCADE,
+    filename VARCHAR NOT NULL,
+    object_key VARCHAR NOT NULL UNIQUE,
+    content_type VARCHAR NOT NULL,
+    size BIGINT NOT NULL
+);
+```
+
+### 5.3. API Endpoints (Implemented)
+
+#### Authentication (`/auth`)
+| Method | Endpoint | Status |
+|--------|----------|--------|
+| POST | `/auth/login` | ✅ Implemented |
+| POST | `/auth/register` | ✅ Implemented |
+| POST | `/auth/logout` | ✅ Implemented |
+| GET | `/auth/me` | ✅ Implemented |
+
+#### Tasks (`/tasks`)
+| Method | Endpoint | Status |
+|--------|----------|--------|
+| POST | `/tasks` | ✅ Implemented |
+| GET | `/tasks` | ✅ Implemented |
+| GET | `/tasks/{task_id}` | ✅ Implemented |
+| PUT | `/tasks/{task_id}` | ✅ Implemented |
+| PATCH | `/tasks/{task_id}` | ✅ Implemented |
+| DELETE | `/tasks/{task_id}` | ✅ Implemented |
+| POST | `/tasks/{task_id}/files/commit` | ✅ Implemented |
+| POST | `/tasks/import/zip` | ✅ Implemented |
+
+#### Storage (`/storage`)
+| Method | Endpoint | Status |
+|--------|----------|--------|
+| GET | `/storage/download` | ✅ Implemented |
+
+#### Workflows (`/workflows`)
+| Method | Endpoint | Status |
+|--------|----------|--------|
+| POST | `/workflows/generate` | ✅ Implemented |
+| GET | `/workflows/generate/{job_id}/status` | ✅ Implemented |
+| GET | `/workflows/generate/{job_id}/results` | ✅ Implemented |
+
+### 5.4. Frontend Routes (Implemented)
+
+| Route | Page | Guard |
+|-------|------|-------|
+| `/login` | LoginPage | GuestGuard |
+| `/register` | RegisterPage | GuestGuard |
+| `/dashboard` | DashboardPage | AuthGuard |
+| `/tasks` | TaskLibraryPage | AuthGuard |
+| `/tasks/new` | CreateTaskWizardPage | AuthGuard |
+| `/tasks/:taskId` | TaskDetailPage | AuthGuard |
+| `/run` | RunPage | AuthGuard |
+
+### 5.5. Frontend Components (Implemented)
+
+#### Auth Module (`features/auth/`)
+- `AuthProvider` - React Context for auth state
+- `useAuth()` - Hook for auth operations
+- `AuthGuard` - Protected route wrapper
+- `GuestGuard` - Guest-only route wrapper
+- `LoginPage`, `RegisterPage` - Auth pages
+- `LoginForm`, `RegisterForm` - Form components
+
+#### Tasks Module (`features/tasks/`)
+- 4-step wizard: `MetadataStep`, `PipelineStep`, `DatasetStep`, `ReviewStep`
+- `QueryAccordion` - Collapsible query editor
+- `SectionCard` - Detail view sections
+- `TaskCard` - Library card component
+- Edit modals for metadata, dataset, pipeline tags
+
+#### Shared Components (`components/`)
+- `Tag` - Universal tag component with variants
+- `FormField` - Standardized form wrapper
+- `MainLayout` - App shell with NavBar
+- `NavBar` - Navigation with profile menu
+
+### 5.6. Security Implementation
+
+| Requirement | Implementation |
+|-------------|----------------|
+| Password Hashing | bcrypt with 12 rounds, 72-byte truncation |
+| JWT Tokens | HS256 algorithm, 7-day expiry |
+| Auth Header | `Authorization: Bearer <token>` |
+| Token Storage | localStorage (remember me) / sessionStorage |
+| Route Protection | AuthGuard component with redirect |
+| CORS | Configured for localhost:5173 |
+
+### 5.7. File Storage Implementation
+
+- **Storage Backend:** MinIO (S3-compatible)
+- **Upload Flow:** Presigned POST URLs → Direct browser upload → Commit metadata
+- **Download Flow:** Backend proxy via `/storage/download`
+- **Object Key Format:** `{task_id}/{split}/input/{query_index}/{filename}`
+
+---
+
+## 6. Configuration Reference
+
+### 6.1. Backend Configuration (`configs/config.yaml`)
+
+```yaml
+db:
+  host: postgres
+  port: 5432
+  name: prism
+  user: prism
+  password: prism
+
+storage:
+  minio:
+    external_endpoint: localhost:9000
+    internal_endpoint: minio:9000
+    access_key: minioadmin
+    secret_key: minioadmin
+    bucket: prism
+
+cors:
+  allow_origins:
+    - http://localhost:5173
+```
+
+### 6.2. Frontend Environment (`web/.env`)
+
+```env
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+### 6.3. Docker Services (`docker/docker-compose.yml`)
+
+```yaml
+services:
+  tasks-server:  # FastAPI on port 8000
+  auth:          # Auth service
+  postgres:      # PostgreSQL on port 5432
+  minio:         # MinIO on ports 9000, 9001
+```
+
+---
+
+## 7. Available Metrics
+
+| Value | Display Label |
+|-------|---------------|
+| `accuracy` | Accuracy |
+| `f1` | F1 Score |
+| `rouge` | ROUGE |
+| `r2` | R² (Coefficient of Determination) |
+| `code_bleu` | CodeBLEU |
+| `numerical_accuracy` | Numerical Accuracy |
+| `semantic_similarity` | Semantic Similarity |
+| `semantic_word_similarity` | Semantic Word Similarity |
+
+---
+
+## 8. Pipeline Tag Categories
+
+| Category | Example Tasks |
+|----------|---------------|
+| Multimodal | Image-Text-to-Text, Visual Question Answering |
+| Computer Vision | Image Classification, Object Detection, Text-to-Image |
+| Natural Language Processing | Text Classification, Translation, Summarization |
+| Audio | Text-to-Speech, Automatic Speech Recognition |
+| Tabular | Tabular Classification, Time Series Forecasting |
+| Reinforcement Learning | Reinforcement Learning, Robotics |

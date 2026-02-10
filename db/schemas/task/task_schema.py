@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from db.schemas.task.query_schema import QueryCreateRequest
 from datetime import datetime
 
@@ -7,6 +7,7 @@ class TaskCreateRequest(BaseModel):
     name: str
     description: str
     metric: str
+    pipeline_tags: Optional[List[str]] = None
     queries: List[QueryCreateRequest]
 
 
@@ -30,6 +31,7 @@ class TaskListResponse(BaseModel):
     name: str
     description: str
     metric: str
+    pipeline_tags: Optional[List[str]] = None
 
     total_queries: int
     test_queries: int
@@ -64,7 +66,10 @@ class TaskDetailResponse(BaseModel):
     name: str
     description: str
     metric: str
+    pipeline_tags: Optional[List[str]] = None
     queries: List[QueryDetailResponse]
+    created_at: datetime
+    updated_at: datetime
 
 class UpdateTaskQueryRequest(BaseModel):
     id: int
@@ -72,6 +77,7 @@ class UpdateTaskQueryRequest(BaseModel):
     split: str
     label: str
     files: list["UpdateTaskFileRequest"]
+    existing_files: list[str] = []  # List of object_keys to preserve
 
 
 class UpdateTaskFileRequest(BaseModel):
@@ -83,4 +89,13 @@ class TaskUpdateRequest(BaseModel):
     name: str
     description: str
     metric: str
+    pipeline_tags: Optional[List[str]] = None
     queries: List[UpdateTaskQueryRequest]
+
+
+class TaskMetadataUpdateRequest(BaseModel):
+    """Partial update for task metadata only (no query/file changes)"""
+    name: Optional[str] = None
+    description: Optional[str] = None
+    metric: Optional[str] = None
+    pipeline_tags: Optional[List[str]] = None

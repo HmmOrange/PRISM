@@ -108,3 +108,4 @@ mcts/optimized/*
 tasks/*
 results/*
 results_workflows/*
+.github

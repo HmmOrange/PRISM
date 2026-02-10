@@ -3,7 +3,6 @@ import {
   CardContent,
   Typography,
   Stack,
-  Chip,
   IconButton,
   Menu,
   MenuItem,
@@ -18,22 +17,14 @@ import ConfirmDialog from "./ConfirmDialog";
 import { deleteTask } from "../../../api/tasks.api";
 import type { TaskListItem } from "../../../types/tasks.types";
 import { useToast } from "../../../components/feedback/ToastProvider";
-import { getMetricLabel } from "../../../config/metrics";
+import { Tag } from "../../../components";
 
 interface Props {
   task: TaskListItem;
   onDeleted: (taskId: string) => void;
 }
 
-function formatDate(dateString?: string): string {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
+const MAX_VISIBLE_TAGS = 3;
 
 export default function TaskCard({ task, onDeleted }: Props) {
   const navigate = useNavigate();
@@ -70,18 +61,24 @@ export default function TaskCard({ task, onDeleted }: Props) {
     <>
       <Card
         onClick={() => navigate(`/tasks/${task.id}`)}
+        variant="outlined"
         sx={{
           height: "100%",
           position: "relative",
+          cursor: "pointer",
           transition: "0.2s",
-          "&:hover": { boxShadow: 4 },
+          "&:hover": {
+            boxShadow: 3,
+          },
+          minWidth: 0,
+          overflow: "hidden",
         }}
       >
         {/* 3-dots menu */}
         <IconButton
           size="small"
           onClick={handleMenuOpen}
-          sx={{ position: "absolute", top: 8, right: 8 }}
+          sx={{ position: "absolute", top: 8, right: 8, zIndex: 1 }}
         >
           <MoreVertIcon fontSize="small" />
         </IconButton>
@@ -95,44 +92,59 @@ export default function TaskCard({ task, onDeleted }: Props) {
           <MenuItem onClick={handleDeleteClick}>Delete</MenuItem>
         </Menu>
 
-        <CardContent>
-          <Stack spacing={1.5}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-              <Typography variant="h6" sx={{ pr: 4 }}>{task.name}</Typography>
-            </Box>
-
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-                minHeight: 40,
-              }}
-            >
-              {task.description || "No description"}
-            </Typography>
-
-            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", alignItems: "center" }}>
-              <Chip
-                label={getMetricLabel(task.metric)}
-                size="small"
-                color="primary"
-                variant="outlined"
-              />
-              <TaskStats
-                test={task.test_queries}
-                validation={task.validation_queries}
-              />
-            </Box>
-
-            {task.created_at && (
-              <Typography variant="caption" color="text.secondary">
-                Created {formatDate(task.created_at)}
+        <CardContent sx={{ pr: 5, overflow: "hidden" }}>
+          <Stack spacing={1.5} sx={{ minWidth: 0 }}>
+            {/* Title and Description */}
+            <Box sx={{ minWidth: 0, width: "100%" }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  width: "100%",
+                }}
+              >
+                {task.name}
               </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{
+                  mt: 0.5,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: "vertical",
+                  width: "100%",
+                }}
+              >
+                {task.description || "No description"}
+              </Typography>
+            </Box>
+
+            {/* Pipeline Tags */}
+            {task.pipeline_tags && task.pipeline_tags.length > 0 && (
+              <Box sx={{ display: "flex", gap: 0.75, flexWrap: "wrap", alignItems: "center" }}>
+                {task.pipeline_tags.slice(0, MAX_VISIBLE_TAGS).map((tag) => (
+                  <Tag key={tag} label={tag} size="small" variant="category" />
+                ))}
+                {task.pipeline_tags.length > MAX_VISIBLE_TAGS && (
+                  <Tag
+                    label={`+${task.pipeline_tags.length - MAX_VISIBLE_TAGS}`}
+                    size="small"
+                    variant="default"
+                  />
+                )}
+              </Box>
             )}
+
+            {/* Stats */}
+            <TaskStats
+              test={task.test_queries}
+              validation={task.validation_queries}
+            />
           </Stack>
         </CardContent>
       </Card>

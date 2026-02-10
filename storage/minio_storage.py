@@ -46,6 +46,9 @@ class MinIOStorage(BaseStorage):
 
         fields = self.client.presigned_post_policy(policy)
 
+        # Ensure the 'key' field is included in the response
+        fields["key"] = object_key
+
         return {
             "url": f"http://{self.endpoint_external}/{self.bucket}",
             "fields": fields,

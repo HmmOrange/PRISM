@@ -10,14 +10,16 @@ from db.schemas.task.task_schema import (
     TaskCreateResponse,
     TaskListResponse,
     TaskDetailResponse,
-    TaskUpdateRequest
+    TaskUpdateRequest,
+    TaskMetadataUpdateRequest,
 )
 from db.services.task.task_service import (
     create_task,
     list_tasks,
     get_task,
     delete_task,
-    update_task
+    update_task,
+    update_task_metadata,
 )
 from db.services.task.task_zip_service import create_task_from_zip
 from db.schemas.task.file_schema import CommitFilesRequest
@@ -123,5 +125,22 @@ def update_task_api(
 ):
     try:
         return update_task(db, task_id, payload, user_id=str(current_user.id))
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+
+@router.patch(
+    "/{task_id}",
+    response_model=TaskDetailResponse,
+    summary="Partially update task metadata only (name, description, metric, pipeline_tags)",
+)
+def patch_task_metadata_api(
+    task_id: str,
+    payload: TaskMetadataUpdateRequest,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
+):
+    try:
+        return update_task_metadata(db, task_id, payload, user_id=str(current_user.id))
     except NoResultFound:
         raise HTTPException(status_code=404, detail="Task not found")

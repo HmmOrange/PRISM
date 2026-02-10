@@ -30,6 +30,7 @@ import FolderIcon from "@mui/icons-material/Folder";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 import { Tag, FormField } from "../../../../components";
+import FilePreview from "../FilePreview";
 import type { EditableQuery, LocalQueryFile } from "../../../../types/tasks.types";
 
 interface DatasetStepProps {
@@ -42,8 +43,7 @@ interface SimpleDropZoneProps {
   onFilesAdd: (files: LocalQueryFile[]) => void;
 }
 
-function SimpleDropZone({ onFilesAdd }: SimpleDropZoneProps) {
-  const [isDragging, setIsDragging] = useState(false);
+function AddFilesButton({ onFilesAdd }: SimpleDropZoneProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleFiles(fileList: FileList) {
@@ -54,38 +54,8 @@ function SimpleDropZone({ onFilesAdd }: SimpleDropZoneProps) {
     onFilesAdd(newFiles);
   }
 
-  function handleDrop(e: React.DragEvent) {
-    e.preventDefault();
-    setIsDragging(false);
-    if (e.dataTransfer.files.length > 0) {
-      handleFiles(e.dataTransfer.files);
-    }
-  }
-
   return (
-    <Box
-      onClick={() => inputRef.current?.click()}
-      onDragOver={(e) => {
-        e.preventDefault();
-        setIsDragging(true);
-      }}
-      onDragLeave={() => setIsDragging(false)}
-      onDrop={handleDrop}
-      sx={{
-        border: "2px dashed",
-        borderColor: isDragging ? "secondary.main" : "divider",
-        borderRadius: 2,
-        p: 3,
-        textAlign: "center",
-        cursor: "pointer",
-        bgcolor: isDragging ? "action.hover" : "transparent",
-        transition: "all 0.2s ease-in-out",
-        "&:hover": {
-          borderColor: "text.secondary",
-          bgcolor: "action.hover",
-        },
-      }}
-    >
+    <>
       <input
         ref={inputRef}
         type="file"
@@ -98,11 +68,15 @@ function SimpleDropZone({ onFilesAdd }: SimpleDropZoneProps) {
           }
         }}
       />
-      <CloudUploadIcon sx={{ fontSize: 32, color: "text.secondary", mb: 1 }} />
-      <Typography variant="body2" color="text.secondary">
-        Drag & drop files or click to browse
-      </Typography>
-    </Box>
+      <Button
+        variant="outlined"
+        size="small"
+        startIcon={<CloudUploadIcon />}
+        onClick={() => inputRef.current?.click()}
+      >
+        Add Files
+      </Button>
+    </>
   );
 }
 
@@ -163,10 +137,12 @@ function QueryCard({ query, index, onUpdate, onDelete, requireLabel }: QueryCard
           size="small"
         />
 
-        {query.files.length > 0 && (
+        {(query.files.length > 0 || (query.existingFiles?.length ?? 0) > 0) && (
           <Box display="flex" alignItems="center" gap={0.5} color="text.secondary">
             <FolderIcon fontSize="small" />
-            <Typography variant="caption">{query.files.length} files</Typography>
+            <Typography variant="caption">
+              {query.files.length + (query.existingFiles?.length ?? 0)} files
+            </Typography>
           </Box>
         )}
 
@@ -227,39 +203,146 @@ function QueryCard({ query, index, onUpdate, onDelete, requireLabel }: QueryCard
             </FormField>
 
             {/* Files */}
-            <FormField label="Input Files" description="Drag and drop files or click to browse">
-              <SimpleDropZone onFilesAdd={handleFilesAdd} />
+            <Box>
+              <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
+                <Typography variant="subtitle2" color="text.secondary">
+                  Input Files
+                </Typography>
+                <AddFilesButton onFilesAdd={handleFilesAdd} />
+              </Box>
 
-              {/* File List */}
-              {query.files.length > 0 && (
-                <Stack spacing={1} mt={2}>
-                  {query.files.map((file) => (
-                    <Box
-                      key={file.id}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        p: 1,
-                        bgcolor: "action.hover",
-                        borderRadius: 1,
-                      }}
-                    >
-                      <FolderIcon fontSize="small" color="action" />
-                      <Typography variant="body2" flex={1} noWrap>
-                        {file.file.name}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {(file.file.size / 1024).toFixed(1)} KB
-                      </Typography>
-                      <IconButton size="small" onClick={() => handleFileDelete(file.id)}>
-                        <DeleteOutlineIcon fontSize="small" />
-                      </IconButton>
-                    </Box>
-                  ))}
-                </Stack>
+              {/* Existing Files (read-only with preview) */}
+              {query.existingFiles && query.existingFiles.length > 0 && (
+                <Box mb={2}>
+                  <Typography variant="caption" color="text.secondary" gutterBottom display="block">
+                    Existing files ({query.existingFiles.length})
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                      gap: 2,
+                    }}
+                  >
+                    {query.existingFiles.map((file) => (
+                      <Paper
+                        key={file.id}
+                        variant="outlined"
+                        sx={{
+                          p: 1.5,
+                          cursor: "pointer",
+                          transition: "all 0.2s",
+                          "&:hover": {
+                            borderColor: "primary.main",
+                            bgcolor: "action.hover",
+                          },
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            height: 140,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            bgcolor: "action.hover",
+                            borderRadius: 1,
+                            mb: 1,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <FilePreview
+                            downloadUrl={file.download_url}
+                            contentType={file.content_type}
+                          />
+                        </Box>
+                        <Typography variant="body2" noWrap display="block" title={file.filename}>
+                          {file.filename}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {(file.size / 1024).toFixed(1)} KB
+                        </Typography>
+                      </Paper>
+                    ))}
+                  </Box>
+                </Box>
               )}
-            </FormField>
+
+              {/* New Files (removable with preview) */}
+              {query.files.length > 0 && (
+                <Box>
+                  <Typography variant="caption" color="text.secondary" gutterBottom display="block">
+                    New files ({query.files.length})
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                      gap: 2,
+                    }}
+                  >
+                    {query.files.map((file) => (
+                      <Paper
+                        key={file.id}
+                        variant="outlined"
+                        sx={{
+                          p: 1.5,
+                          position: "relative",
+                          transition: "all 0.2s",
+                          "&:hover": {
+                            borderColor: "primary.main",
+                            "& .delete-btn": { opacity: 1 },
+                          },
+                        }}
+                      >
+                        <IconButton
+                          className="delete-btn"
+                          size="small"
+                          onClick={() => handleFileDelete(file.id)}
+                          sx={{
+                            position: "absolute",
+                            top: 4,
+                            right: 4,
+                            opacity: 0,
+                            transition: "opacity 0.2s",
+                            bgcolor: "background.paper",
+                            "&:hover": { bgcolor: "error.light", color: "error.contrastText" },
+                          }}
+                        >
+                          <DeleteOutlineIcon fontSize="small" />
+                        </IconButton>
+                        <Box
+                          sx={{
+                            height: 140,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            bgcolor: "action.hover",
+                            borderRadius: 1,
+                            mb: 1,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <FilePreview file={file.file} />
+                        </Box>
+                        <Typography variant="body2" noWrap display="block" title={file.file.name}>
+                          {file.file.name}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {(file.file.size / 1024).toFixed(1)} KB
+                        </Typography>
+                      </Paper>
+                    ))}
+                  </Box>
+                </Box>
+              )}
+
+              {/* Empty state */}
+              {(!query.existingFiles || query.existingFiles.length === 0) && query.files.length === 0 && (
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  <em>No files added</em>
+                </Typography>
+              )}
+            </Box>
           </Stack>
         </Box>
       </Collapse>

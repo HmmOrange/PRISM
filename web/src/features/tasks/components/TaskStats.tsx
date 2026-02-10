@@ -1,4 +1,6 @@
-import { Stack, Chip } from "@mui/material";
+import { Stack } from "@mui/material";
+
+import { Tag } from "../../../components";
 
 interface Props {
   test: number;
@@ -8,12 +10,8 @@ interface Props {
 export default function TaskStats({ test, validation }: Props) {
   return (
     <Stack direction="row" spacing={1}>
-      <Chip label={`Test ${test}`} size="small" color="primary" />
-      <Chip
-        label={`Validation ${validation}`}
-        size="small"
-        color="secondary"
-      />
+      <Tag label={`Test ${test}`} size="small" variant="test" />
+      <Tag label={`Validation ${validation}`} size="small" variant="validation" />
     </Stack>
   );
 }

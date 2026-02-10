@@ -81,3 +81,24 @@ export async function updateTask(
     body: JSON.stringify(payload),
   });
 }
+
+export interface TaskMetadataUpdate {
+  name?: string;
+  description?: string;
+  metric?: string;
+  pipeline_tags?: string[];
+}
+
+/**
+ * Partially update task metadata only (name, description, metric, pipeline_tags).
+ * Does NOT modify queries or files.
+ */
+export async function patchTaskMetadata(
+  taskId: string,
+  payload: TaskMetadataUpdate
+): Promise<TaskDetail> {
+  return apiFetch<TaskDetail>(`/tasks/${taskId}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
